@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.SystemClock;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 );
 
 // Dispatch touch event to view
-                m_self.dispatchTouchEvent(motionEvent);
+                //m_self.dispatchTouchEvent(motionEvent);
                 handler.postDelayed(this, 500); // set time here to refresh textView
             }
         });
@@ -89,19 +90,23 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
+        int pointerIndex = motionEvent.getActionIndex();
+        if(pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
+            return false;
 
-        float x = motionEvent.getX();
-        float y = motionEvent.getY();
+        int pointerId = motionEvent.getPointerId(pointerIndex);
+        float x = motionEvent.getX(pointerIndex);
+        float y = motionEvent.getY(pointerIndex);
 
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, "Down " + x + " " + y);
+                Log.d(TAG, pointerId + " Down " + x + " " + y);
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d(TAG, "Move " + x + " " + y);
+                Log.d(TAG, pointerId + " Move " + x + " " + y);
                 break;
             case MotionEvent.ACTION_UP:
-                Log.d(TAG, "Up " + x + " " + y);
+                Log.d(TAG, pointerId + " Up " + x + " " + y);
                 break;
             default:
                 Log.d(TAG, motionEvent.getAction() + "");

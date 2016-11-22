@@ -33,11 +33,26 @@ import static android.R.attr.y;
  */
 public class TouchesPool {
     private String TAG = "Lulu CastingPool";
-    private ArrayList<String> m_ips = new ArrayList<String>();
+    private ArrayList<Touch> m_touches = new ArrayList<Touch>();
     private static TouchesPool m_instance = null;
 
+    public class Touch {
+        public float m_x, m_y;
+        public int m_type;
+
+        public Touch(float x, float y, int type) {
+            m_x = x;
+            m_y = y;
+            m_type = type;
+        }
+    }
+
+    public void AddTouch(float x, float y, int type) {
+        m_touches.add(new Touch(x, y, type));
+    }
+
     public static TouchesPool getInstance() {
-        if(m_instance == null) {
+        if (m_instance == null) {
             m_instance = new TouchesPool();
         }
 
