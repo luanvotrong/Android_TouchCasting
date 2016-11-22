@@ -1,8 +1,15 @@
-package com.luanvotrong.touchcasting;
+package com.luanvotrong.CastingServer;
 
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
+import android.app.Service;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.net.nsd.NsdServiceInfo;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
@@ -17,6 +24,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
@@ -31,27 +39,33 @@ import static android.R.attr.y;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class CastingPool  implements Parcelable {
-    private String TAG = "Lulu CastingPool";
-    private ArrayList<String> m_ips = new ArrayList<String>();
+public class CastingServer extends Service {
+    private String TAG = "Lulu CastingServer";
+
+    NsdServiceInfo m_serviceInfo = new NsdServiceInfo();
 
     @Override
-    public int describeContents() {
-        return 0;
+    public void onCreate() {
+
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeList(m_ips);
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Toast.makeText(this, "Server started", Toast.LENGTH_SHORT).show();
+
+        m_serviceInfo.setServiceName("TouchCasting");
+        m_serviceInfo.setServiceType("");
+
+        return START_NOT_STICKY;
     }
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public CastingPool createFromParcel(Parcel in) {
-            return new CastingPool();
-        }
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
 
-        public CastingPool[] newArray(int size) {
-            return new CastingPool[size];
-        }
-    };
+    @Override
+    public void onDestroy() {
+        Toast.makeText(this, "Server stopped", Toast.LENGTH_SHORT).show();
+    }
 }
