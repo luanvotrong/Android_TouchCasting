@@ -31,7 +31,6 @@ public class NsdHelper {
 
     public void init(Context ctx) {
         m_context = ctx;
-
         m_nsdManager = (NsdManager) m_context.getSystemService(Context.NSD_SERVICE);
     }
 
@@ -66,11 +65,13 @@ public class NsdHelper {
                 // resolve a conflict, so update the name you initially requested
                 // with the name Android actually used.
                 //mServiceName = NsdServiceInfo.getServiceName();
+                Log.e(TAG, "Registration succeed");
             }
 
             @Override
             public void onRegistrationFailed(NsdServiceInfo serviceInfo, int errorCode) {
                 // Registration failed!  Put debugging code here to determine why.
+                Log.e(TAG, "Registration Failed: " + errorCode);
             }
 
             @Override
@@ -120,7 +121,11 @@ public class NsdHelper {
             @Override
             public void onServiceFound(NsdServiceInfo serviceInfo) {
                 Log.d(TAG, "Service discovered: " + serviceInfo);
-                if(serviceInfo.getServiceName().contains(SERVICE_NAME)) {
+                if (!serviceInfo.getServiceType().equals(SERVICE_TYPE)) {
+                    Log.d(TAG, "Unknown Service Type: " + serviceInfo.getServiceType());
+                } else if (serviceInfo.getServiceName().equals(SERVICE_NAME)) {
+                    Log.d(TAG, "Same machine: " + SERVICE_NAME);
+                } else if (serviceInfo.getServiceName().contains(SERVICE_NAME)){
                     m_nsdManager.resolveService(serviceInfo, m_resolveListener);
                 }
             }
@@ -147,5 +152,14 @@ public class NsdHelper {
                 Toast.makeText(m_context, "Got listener " + serviceInfo.getHost() + ":" + serviceInfo.getPort(), Toast.LENGTH_LONG);
             }
         };
+    }
+
+    public void tearDown() {
+        if(m_registrationListener != null) {
+            m_nsdManager.unregisterService(m_registrationListener);
+        }
+        if(m_discoveryListener != null) {
+            m_nsdManager.stopServiceDiscovery(m_discoveryListener);
+        }
     }
 }

@@ -106,6 +106,13 @@ public class MainActivity extends AppCompatActivity {
         // created, to briefly hint to the user that UI controls
     }
 
+    @Override
+    protected void onDestroy() {
+        m_nsdHelper.tearDown();
+
+        super.onDestroy();
+    }
+
     /**
      * Touch listener to use for in-layout UI controls to delay hiding the
      * system UI. This is to prevent the jarring behavior of controls going away
