@@ -89,8 +89,8 @@ public class NsdHelper {
 
     //////////////////////////////////////////////////////////Discoverer//////////////////////////////////////////////////////////
     public void discoverServices() {
-        initDiscoveryListener();
         initResolveListener();
+        initDiscoveryListener();
 
         m_nsdManager.discoverServices(SERVICE_TYPE, NsdManager.PROTOCOL_DNS_SD, m_discoveryListener);
     }
@@ -116,6 +116,7 @@ public class NsdHelper {
 
             @Override
             public void onDiscoveryStopped(String serviceType) {
+                Log.d(TAG, "Service discovery stopped");
             }
 
             @Override
@@ -132,7 +133,7 @@ public class NsdHelper {
 
             @Override
             public void onServiceLost(NsdServiceInfo serviceInfo) {
-
+                Log.d(TAG, "Service discovery lost");
             }
         };
     }
@@ -148,8 +149,7 @@ public class NsdHelper {
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
                 m_serviceInfo = serviceInfo;
-
-                Toast.makeText(m_context, "Got listener " + serviceInfo.getHost() + ":" + serviceInfo.getPort(), Toast.LENGTH_LONG);
+                Log.e(TAG, "Resoved done: " + serviceInfo.getHost() + ":" + serviceInfo.getPort());
             }
         };
     }

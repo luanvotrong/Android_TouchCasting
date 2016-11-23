@@ -34,14 +34,13 @@ import static android.R.attr.y;
 public class ClientPool {
     private String TAG = "Lulu ClientPool";
     private ArrayList<String> m_ips = new ArrayList<String>();
-    private static ClientPool m_instance = null;
 
-    public static ClientPool getInstance() {
-        if(m_instance == null) {
-            m_instance = new ClientPool();
-        }
-
-        return m_instance;
+    private class ClientInfo {
+        public String m_ip;
+        public int m_port;
     }
 
+    public void AddClient(String client, int port) {
+
+    }
 }

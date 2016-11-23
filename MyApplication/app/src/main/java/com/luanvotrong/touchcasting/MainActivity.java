@@ -1,9 +1,13 @@
 package com.luanvotrong.touchcasting;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.SystemClock;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +22,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import com.luanvotrong.CastingServer.ClientPool;
 import com.luanvotrong.CastingServer.NsdHelper;
 
 import static android.R.attr.onClick;
@@ -37,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button m_btnServer;
     private Button m_btnClient;
+    private ClientPool m_clientPool;
     private NsdHelper m_nsdHelper;
 
     @Override
@@ -48,8 +54,21 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
+
         m_nsdHelper = new NsdHelper();
         m_nsdHelper.init(this);
+
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
+        {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET))
+            {
+
+            }
+            else
+            {
+                ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.INTERNET }, 1);
+            }
+        }
 
         //m_surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
         m_btnServer = (Button) findViewById(R.id.Server);
