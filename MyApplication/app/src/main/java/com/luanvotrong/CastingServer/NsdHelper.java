@@ -36,12 +36,9 @@ public class NsdHelper {
     }
 
     //////////////////////////////////////////////////////////Listener/////////////////////////////////////////////////////////////////////////////
-    public void initListener() {
-        initRegistrationListener();
-        registerService();
-    }
-
     public void registerService() {
+        initRegistrationListener();
+
         try {
             m_serverSocket = new ServerSocket(0);
         } catch (Exception e) {
@@ -53,8 +50,11 @@ public class NsdHelper {
             m_serviceInfo = new NsdServiceInfo();
             m_serviceInfo.setServiceType(SERVICE_TYPE);
             m_serviceInfo.setServiceName(SERVICE_NAME);
+            m_serviceInfo.setPort(m_serverSocket.getLocalPort());
 
             m_nsdManager.registerService(m_serviceInfo, NsdManager.PROTOCOL_DNS_SD, m_registrationListener);
+            Log.e(TAG, "Started serice");
+            Toast.makeText(m_context, "Started listening", Toast.LENGTH_LONG);
         }
     }
 
@@ -143,6 +143,8 @@ public class NsdHelper {
             @Override
             public void onServiceResolved(NsdServiceInfo serviceInfo) {
                 m_serviceInfo = serviceInfo;
+
+                Toast.makeText(m_context, "Got listener " + serviceInfo.getHost() + ":" + serviceInfo.getPort(), Toast.LENGTH_LONG);
             }
         };
     }

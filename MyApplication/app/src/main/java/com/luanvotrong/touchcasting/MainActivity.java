@@ -16,7 +16,11 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 
+import com.luanvotrong.CastingServer.NsdHelper;
+
+import static android.R.attr.onClick;
 import static android.R.attr.radius;
 import static android.R.attr.x;
 import static android.R.attr.y;
@@ -31,6 +35,10 @@ public class MainActivity extends AppCompatActivity {
     private SurfaceView m_surfaceView;
     private MainActivity m_self = this;
 
+    private Button m_btnServer;
+    private Button m_btnClient;
+    private NsdHelper m_nsdHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,7 +48,24 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        m_surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
+        m_nsdHelper = new NsdHelper();
+        m_nsdHelper.init(this);
+
+        //m_surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
+        m_btnServer = (Button) findViewById(R.id.Server);
+        m_btnServer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m_nsdHelper.registerService();
+            }
+        });
+        m_btnClient = (Button) findViewById(R.id.Client);
+        m_btnClient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                m_nsdHelper.discoverServices();
+            }
+        });
 
         // Set up the user interaction to manually show or hide the system UI.
         final Handler handler = new Handler();
@@ -53,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
                 float y = 10.0f;
 
                 int metaState = 0;
-                Log.d(TAG, "fuck");
                 MotionEvent motionEvent = MotionEvent.obtain(
                         downTime,
                         eventTime,
@@ -91,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
         int pointerIndex = motionEvent.getActionIndex();
-        if(pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
+        if (pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
             return false;
 
         int pointerId = motionEvent.getPointerId(pointerIndex);
