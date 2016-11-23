@@ -5,9 +5,13 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,9 +22,12 @@ import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.luanvotrong.CastingServer.ClientPool;
 import com.luanvotrong.CastingServer.NsdHelper;
@@ -37,9 +44,9 @@ import static android.R.attr.y;
 public class MainActivity extends AppCompatActivity {
     private String TAG = "Lulu MainActivity";
     private Paint m_paint = new Paint();
-    private SurfaceView m_surfaceView;
     private MainActivity m_self = this;
 
+    private DrawingView m_View;
     private Button m_btnServer;
     private Button m_btnClient;
     private ClientPool m_clientPool;
@@ -52,8 +59,10 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.activity_main);
-
+        m_View = new DrawingView(this);
+        m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        m_View.setEnabled(true);
+        setContentView(m_View);
 
         m_nsdHelper = new NsdHelper();
         m_nsdHelper.init(this);
@@ -70,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        //m_surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
+        /*
         m_btnServer = (Button) findViewById(R.id.Server);
         m_btnServer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
                 m_nsdHelper.discoverServices();
             }
         });
-
+        */
         // Set up the user interaction to manually show or hide the system UI.
         final Handler handler = new Handler();
         handler.post(new Runnable() {
@@ -151,12 +160,15 @@ public class MainActivity extends AppCompatActivity {
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 Log.d(TAG, pointerId + " Down " + x + " " + y);
+                m_View.setPos(x, y );
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.d(TAG, pointerId + " Move " + x + " " + y);
+                m_View.setPos(x, y );
                 break;
             case MotionEvent.ACTION_UP:
                 Log.d(TAG, pointerId + " Up " + x + " " + y);
+                m_View.setPos(-100, -100);
                 break;
             default:
                 Log.d(TAG, motionEvent.getAction() + "");
