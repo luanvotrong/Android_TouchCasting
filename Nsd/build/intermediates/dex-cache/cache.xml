@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="E:\Prj\Android_TouchCasting\Nsd\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="dfefe0164a5c6fc162370dbd35ba927cab75c411">
+        <dex dex="E:\Prj\Android_TouchCasting\Nsd\app\build\intermediates\pre-dexed\debug\instant-run-bootstrap_3be466d44eac8e9bc606b18aef41f28acc70d9df.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="E:\Prj\Android_TouchCasting\Nsd\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="24.0.3"
+        sha1="b320c7efeea521613431d96c2fe5942fc56e309b">
+        <dex dex="E:\Prj\Android_TouchCasting\Nsd\app\build\intermediates\pre-dexed\debug\instant-run_20ef3361800337138e142a5c8bcf2e1ec49fd8c8.jar" />
+    </item>
+
+</items>

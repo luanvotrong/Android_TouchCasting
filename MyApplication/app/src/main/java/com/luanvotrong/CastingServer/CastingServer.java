@@ -6,7 +6,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
+import android.net.sip.SipAudioCall;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
@@ -28,6 +30,7 @@ import android.widget.Toast;
 
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,33 +42,7 @@ import static android.R.attr.y;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class CastingServer extends Service {
+public class CastingServer {
     private String TAG = "Lulu CastingServer";
 
-    NsdServiceInfo m_serviceInfo = new NsdServiceInfo();
-
-    @Override
-    public void onCreate() {
-
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(this, "Server started", Toast.LENGTH_SHORT).show();
-
-        m_serviceInfo.setServiceName("TouchCasting");
-        m_serviceInfo.setServiceType("");
-
-        return START_NOT_STICKY;
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        Toast.makeText(this, "Server stopped", Toast.LENGTH_SHORT).show();
-    }
 }

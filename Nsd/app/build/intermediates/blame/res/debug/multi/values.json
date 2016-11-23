@@ -1,0 +1,102 @@
+[
+    {
+        "outputFile": "E:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 44,
+                    "endOffset": 95
+                },
+                "from": {
+                    "file": "E:\\Prj\\Android_TouchCasting\\Nsd\\app\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 18,
+                        "startColumn": 4,
+                        "startOffset": 662,
+                        "endColumn": 44,
+                        "endOffset": 702
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 100,
+                    "endColumn": 43,
+                    "endOffset": 139
+                },
+                "from": {
+                    "file": "E:\\Prj\\Android_TouchCasting\\Nsd\\app\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 20,
+                        "startColumn": 4,
+                        "startOffset": 712,
+                        "endColumn": 43,
+                        "endOffset": 751
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 144,
+                    "endColumn": 45,
+                    "endOffset": 185
+                },
+                "from": {
+                    "file": "E:\\Prj\\Android_TouchCasting\\Nsd\\app\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 21,
+                        "startColumn": 4,
+                        "startOffset": 756,
+                        "endColumn": 45,
+                        "endOffset": 797
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 190,
+                    "endColumn": 45,
+                    "endOffset": 231
+                },
+                "from": {
+                    "file": "E:\\Prj\\Android_TouchCasting\\Nsd\\app\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 22,
+                        "startColumn": 4,
+                        "startOffset": 802,
+                        "endColumn": 45,
+                        "endOffset": 843
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 6,
+                    "startColumn": 4,
+                    "startOffset": 236,
+                    "endColumn": 37,
+                    "endOffset": 269
+                },
+                "from": {
+                    "file": "E:\\Prj\\Android_TouchCasting\\Nsd\\app\\src\\main\\res\\values\\strings.xml",
+                    "position": {
+                        "startLine": 23,
+                        "startColumn": 4,
+                        "startOffset": 848,
+                        "endColumn": 37,
+                        "endOffset": 881
+                    }
+                }
+            }
+        ]
+    }
+]

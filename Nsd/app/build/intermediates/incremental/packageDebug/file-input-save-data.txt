@@ -1,0 +1,18 @@
+#Internal package file, do not edit.
+#Tue Nov 22 17:06:10 ICT 2016
+1.base=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\res\\resources-debug.ap_
+4.file=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\res\\resources-debug.ap_\\res\\drawable-hdpi-v4\\ic_launcher.png
+1.file=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\res\\resources-debug.ap_\\AndroidManifest.xml
+4.set=ANDROID_RESOURCE
+2.base=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\res\\resources-debug.ap_
+3.set=DEX
+2.set=ANDROID_RESOURCE
+2.file=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\res\\resources-debug.ap_\\resources.arsc
+count=5
+1.set=ANDROID_RESOURCE
+3.base=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main
+0.set=ANDROID_RESOURCE
+0.base=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\res\\resources-debug.ap_
+3.file=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main\\classes.dex
+0.file=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\res\\resources-debug.ap_\\res\\layout\\main.xml
+4.base=E\:\\Prj\\Android_TouchCasting\\Nsd\\app\\build\\intermediates\\res\\resources-debug.ap_
