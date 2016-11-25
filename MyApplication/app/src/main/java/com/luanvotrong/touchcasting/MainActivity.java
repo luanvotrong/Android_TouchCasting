@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private Button m_btnServer;
     private Button m_btnClient;
 
+    private TouchesPool m_touchesPool;
     private CastingMgr m_castingMgr;
 
     @Override
@@ -60,10 +61,10 @@ public class MainActivity extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-        m_View = new DrawingView(this);
-        m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        m_View.setEnabled(false);
+        setContentView(R.layout.activity_main);
+        //m_View = new DrawingView(this);
+        //m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        //m_View.setEnabled(false);
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
         {
@@ -77,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        m_touchesPool = new TouchesPool();
+        m_castingMgr = new CastingMgr(this,m_touchesPool);
         m_btnServer = (Button) findViewById(R.id.Server);
         m_btnServer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:
         }
+
+        m_touchesPool.AddTouch(x, y, motionEvent.getAction());
 
         return false;
     }
