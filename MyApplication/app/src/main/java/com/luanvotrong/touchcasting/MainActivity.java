@@ -44,6 +44,13 @@ import static android.R.attr.y;
  * status bar and navigation/system bar) with user interaction.
  */
 public class MainActivity extends AppCompatActivity {
+    public enum CAST_TYPE {
+        NONE,
+        CASTER,
+        RECEIVER
+    }
+    private CAST_TYPE m_type = CAST_TYPE.NONE;
+
     private String TAG = "Lulu MainActivity";
     private Paint m_paint = new Paint();
     private MainActivity m_self = this;
@@ -62,9 +69,6 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
-        //m_View = new DrawingView(this);
-        //m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        //m_View.setEnabled(false);
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
         {
@@ -78,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        m_View = new DrawingView(this);
+        m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        m_View.setEnabled(false);
+
         m_touchesPool = new TouchesPool();
         m_castingMgr = new CastingMgr(this,m_touchesPool);
         m_btnServer = (Button) findViewById(R.id.Server);
@@ -85,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 m_castingMgr.initCaster();
+                m_type = CAST_TYPE.CASTER;
             }
         });
         m_btnClient = (Button) findViewById(R.id.Client);
@@ -92,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 m_castingMgr.initReceiver();
+                setContentView(m_View);
+                m_type = CAST_TYPE.RECEIVER;
             }
         });
     }
@@ -125,17 +136,14 @@ public class MainActivity extends AppCompatActivity {
         float x = motionEvent.getX(pointerIndex);
         float y = motionEvent.getY(pointerIndex);
 
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
+        switch(m_type) {
+            case CASTER:
+                m_touchesPool.AddTouch(x, y, motionEvent.getAction());
                 break;
-            case MotionEvent.ACTION_MOVE:
+            case RECEIVER:
+                m_View.setTouch(x, y);
                 break;
-            case MotionEvent.ACTION_UP:
-                break;
-            default:
         }
-
-        m_touchesPool.AddTouch(x, y, motionEvent.getAction());
 
         return false;
     }

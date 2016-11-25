@@ -4,7 +4,9 @@ package com.luanvotrong.CastingServer;
 import android.content.Context;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import com.luanvotrong.touchcasting.MainActivity;
 
@@ -12,12 +14,14 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.util.ArrayList;
 
 public class CastingMgr {
     private int m_udpPort = 63678;
     private int m_tcpPort = 63677;
     private MainActivity m_context;
     private TouchesPool m_touchesPool;
+    private ArrayList<String> m_touches = new ArrayList<String>();
 
     public CastingMgr(MainActivity context, TouchesPool touchesPool) {
         m_context = context;
@@ -30,8 +34,41 @@ public class CastingMgr {
     }
 
     public void initReceiver() {
+        m_receiver = new Thread(new Receiver());
+        m_receiver.start();
 
+        m_touchesInjector = new Thread(new TouchesInjector());
+        m_touchesInjector.start();
     }
+
+    //////////////////////////////////////////////Touch Injector//////////////////////////////////////
+    private class TouchesInjector implements Runnable {
+        @Override
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                if (m_touches.size() > 0) {
+                    String touch = m_touches.get(m_touches.size() - 1);
+                    String[] infos = touch.split(":");
+                    long downTime = SystemClock.uptimeMillis();
+                    long eventTime = SystemClock.uptimeMillis() + 0;
+                    int metaState = 0;
+                    MotionEvent motionEvent = MotionEvent.obtain(
+                            downTime,
+                            eventTime,
+                            Integer.parseInt(infos[2]),
+                            Float.parseFloat(infos[0]),
+                            Float.parseFloat(infos[1]),
+                            metaState
+                    );
+
+                    m_context.dispatchTouchEvent(motionEvent);
+                    m_touches.remove(m_touches.size() - 1);
+                }
+            }
+        }
+    }
+
+    Thread m_touchesInjector;
 
     //////////////////////////////////////////////Touch Broadcaster//////////////////////////////////////
     private class Broadcaster implements Runnable {
@@ -58,22 +95,54 @@ public class CastingMgr {
             try {
                 DatagramSocket s = new DatagramSocket();
                 InetAddress local = getBroadcastAddress();
-
                 while (!Thread.currentThread().isInterrupted()) {
                     TouchesPool.Touch touch = m_touchesPool.GetTouch();
-                    if(touch != null) {
-                        String mess = "" + touch.m_x + ":" + touch.m_y;
+                    if (touch != null) {
+                        String mess = "" + touch.m_x + ":" + touch.m_y + ":" + touch.m_type;
                         int msg_length = mess.length();
                         byte[] message = mess.getBytes();
 
                         DatagramPacket p = new DatagramPacket(message, msg_length, local, m_udpPort);
                         s.send(p);
+                        Log.d(TAG, "sent");
                     }
                 }
+                s.close();
             } catch (Exception e) {
                 Log.d(TAG, e.toString());
             }
         }
     }
+
     private Thread m_broadReceiver;
+
+    //////////////////////////////////////////////Touch Broadcaster//////////////////////////////////////
+    private class Receiver implements Runnable {
+        private String TAG = "Lulu Receiver";
+
+        @Override
+        public void run() {
+            try {
+                try {
+                    DatagramSocket s = new DatagramSocket(m_udpPort);
+                    s.setBroadcast(true);
+                    while (!Thread.currentThread().isInterrupted()) {
+                        byte[] message = new byte[1500];
+                        DatagramPacket p = new DatagramPacket(message, message.length);
+                        s.receive(p);
+                        String mess = new String(message, 0, p.getLength());
+                        m_touches.add(mess);
+                        Log.d(TAG, mess);
+                    }
+                    s.close();
+                } catch (Exception e) {
+                    Log.d("Lulu", e.toString());
+                }
+            } catch (Exception e) {
+                Log.d("Lulu", e.toString());
+            }
+        }
+    }
+
+    private Thread m_receiver;
 }

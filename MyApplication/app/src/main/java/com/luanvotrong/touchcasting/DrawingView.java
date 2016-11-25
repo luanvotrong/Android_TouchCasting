@@ -46,8 +46,8 @@ import static android.R.attr.y;
 public class DrawingView extends View {
     private String TAG = "Lulu MainActivity";
     private Paint m_paint;
-    private float m_x = -100;
-    private float m_y = -100;
+    private TouchesPool m_touchesPool;
+    private float m_x, m_y;
 
     public DrawingView(Context ctx) {
         super(ctx);
@@ -58,11 +58,15 @@ public class DrawingView extends View {
         m_paint.setStrokeWidth(10);
     }
 
+    public void setTouch(float x, float y) {
+        m_x = x;
+        m_y = y;
+    }
+
     @Override
     protected void onDraw(Canvas c) {
         super.onDraw(c);
-        Log.d(TAG, "draw");
-        //c.drawCircle(touch.m_x, touch.m_y, 50, m_paint);
+        c.drawCircle(m_x, m_y, 50, m_paint);
 
         invalidate();
     }

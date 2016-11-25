@@ -44,6 +44,9 @@ public class TouchesPool {
             m_y = y;
             m_type = type;
         }
+
+        public Touch(String info) {
+        }
     }
 
     public void AddTouch(float x, float y, int type) {
