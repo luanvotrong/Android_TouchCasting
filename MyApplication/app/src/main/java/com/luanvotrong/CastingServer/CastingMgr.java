@@ -2,10 +2,12 @@ package com.luanvotrong.CastingServer;
 
 
 import android.content.Context;
+import android.graphics.Point;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Display;
 import android.view.MotionEvent;
 
 import com.luanvotrong.touchcasting.MainActivity;
@@ -22,10 +24,18 @@ public class CastingMgr {
     private MainActivity m_context;
     private TouchesPool m_touchesPool;
     private ArrayList<String> m_touches = new ArrayList<String>();
+    private float m_screenW;
+    private float m_screenH;
 
     public CastingMgr(MainActivity context, TouchesPool touchesPool) {
         m_context = context;
         m_touchesPool = touchesPool;
+
+        Display display = m_context.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        m_screenW = size.x;
+        m_screenH = size.y;
     }
 
     public void initCaster() {
@@ -56,8 +66,8 @@ public class CastingMgr {
                             downTime,
                             eventTime,
                             Integer.parseInt(infos[2]),
-                            Float.parseFloat(infos[0]),
-                            Float.parseFloat(infos[1]),
+                            Float.parseFloat(infos[0]) * m_screenW,
+                            Float.parseFloat(infos[1]) * m_screenH,
                             metaState
                     );
 
@@ -98,7 +108,9 @@ public class CastingMgr {
                 while (!Thread.currentThread().isInterrupted()) {
                     TouchesPool.Touch touch = m_touchesPool.GetTouch();
                     if (touch != null) {
-                        String mess = "" + touch.m_x + ":" + touch.m_y + ":" + touch.m_type;
+                        float pX = touch.m_x / m_screenW;
+                        float pY = touch.m_y /m_screenH;
+                        String mess = "" + pX + ":" + pY + ":" + touch.m_type;
                         int msg_length = mess.length();
                         byte[] message = mess.getBytes();
 
