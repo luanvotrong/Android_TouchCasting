@@ -58,19 +58,11 @@ public class DrawingView extends View {
         m_paint.setStrokeWidth(10);
     }
 
-    public void setPos(float x, float y) {
-        TouchesPool.getInstance().AddTouch(x, y, 0);
-    }
-
     @Override
     protected void onDraw(Canvas c) {
         super.onDraw(c);
         Log.d(TAG, "draw");
-        TouchesPool.Touch touch = TouchesPool.getInstance().GetTouch();
-        if(touch != null)
-        {
-            c.drawCircle(touch.m_x, touch.m_y, 50, m_paint);
-        }
+        //c.drawCircle(touch.m_x, touch.m_y, 50, m_paint);
 
         invalidate();
     }

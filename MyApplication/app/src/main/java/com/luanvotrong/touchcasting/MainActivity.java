@@ -29,8 +29,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.luanvotrong.CastingServer.CastingMgr;
 import com.luanvotrong.CastingServer.ClientPool;
 import com.luanvotrong.CastingServer.NsdHelper;
+import com.luanvotrong.CastingServer.TouchesPool;
 
 import static android.R.attr.onClick;
 import static android.R.attr.radius;
@@ -49,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
     private DrawingView m_View;
     private Button m_btnServer;
     private Button m_btnClient;
-    private ClientPool m_clientPool;
-    private NsdHelper m_nsdHelper;
+
+    private CastingMgr m_castingMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,11 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         m_View = new DrawingView(this);
         m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        m_View.setEnabled(true);
-        setContentView(m_View);
-
-        m_nsdHelper = new NsdHelper();
-        m_nsdHelper.init(this);
+        m_View.setEnabled(false);
 
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
         {
@@ -79,51 +77,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        /*
         m_btnServer = (Button) findViewById(R.id.Server);
         m_btnServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_nsdHelper.registerService();
+                m_castingMgr.initCaster();
             }
         });
         m_btnClient = (Button) findViewById(R.id.Client);
         m_btnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_nsdHelper.discoverServices();
+                m_castingMgr.initReceiver();
             }
         });
-        */
-        // Set up the user interaction to manually show or hide the system UI.
-        final Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long downTime = SystemClock.uptimeMillis();
-                long eventTime = SystemClock.uptimeMillis() + 0;
-                float x = 10.0f;
-                float y = 10.0f;
-
-                int metaState = 0;
-                MotionEvent motionEvent = MotionEvent.obtain(
-                        downTime,
-                        eventTime,
-                        MotionEvent.ACTION_UP,
-                        x,
-                        y,
-                        metaState
-                );
-
-// Dispatch touch event to view
-                //m_self.dispatchTouchEvent(motionEvent);
-                handler.postDelayed(this, 500); // set time here to refresh textView
-            }
-        });
-
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
     }
 
     @Override
@@ -136,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        m_nsdHelper.tearDown();
-
         super.onDestroy();
     }
 
@@ -159,19 +124,12 @@ public class MainActivity extends AppCompatActivity {
 
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, pointerId + " Down " + x + " " + y);
-                m_View.setPos(x, y );
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d(TAG, pointerId + " Move " + x + " " + y);
-                m_View.setPos(x, y );
                 break;
             case MotionEvent.ACTION_UP:
-                Log.d(TAG, pointerId + " Up " + x + " " + y);
-                m_View.setPos(-100, -100);
                 break;
             default:
-                Log.d(TAG, motionEvent.getAction() + "");
         }
 
         return false;

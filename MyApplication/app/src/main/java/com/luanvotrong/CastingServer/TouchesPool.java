@@ -34,15 +34,6 @@ import static android.R.attr.y;
 public class TouchesPool {
     private String TAG = "Lulu CastingPool";
     private ArrayList<Touch> m_touches = new ArrayList<Touch>();
-    private static TouchesPool m_instance = null;
-
-    public static TouchesPool getInstance() {
-        if(m_instance == null) {
-            m_instance = new TouchesPool();
-        }
-
-        return m_instance;
-    }
 
     public class Touch {
         public float m_x, m_y;

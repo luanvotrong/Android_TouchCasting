@@ -29,6 +29,12 @@ public class NsdHelper {
 
     private Context m_context;
 
+    private ClientPool m_clientPool;
+
+    public void setClientPool(ClientPool clientPool) {
+        m_clientPool = clientPool;
+    }
+
     public void init(Context ctx) {
         m_context = ctx;
         m_nsdManager = (NsdManager) m_context.getSystemService(Context.NSD_SERVICE);

@@ -33,14 +33,14 @@ import static android.R.attr.y;
  */
 public class ClientPool {
     private String TAG = "Lulu ClientPool";
-    private ArrayList<String> m_ips = new ArrayList<String>();
+    private ArrayList<String> m_waitingClients = new ArrayList<String>();
 
     private class ClientInfo {
         public String m_ip;
         public int m_port;
     }
 
-    public void AddClient(String client, int port) {
-
+    public void AddWaitingClient(String client, int port) {
+        m_waitingClients.add(client + ":" + port);
     }
 }
