@@ -36,6 +36,14 @@ public class TouchesPool {
     private ArrayList<Touch> m_touches = new ArrayList<Touch>();
     private static TouchesPool m_instance = null;
 
+    public static TouchesPool getInstance() {
+        if(m_instance == null) {
+            m_instance = new TouchesPool();
+        }
+
+        return m_instance;
+    }
+
     public class Touch {
         public float m_x, m_y;
         public int m_type;
@@ -51,11 +59,14 @@ public class TouchesPool {
         m_touches.add(new Touch(x, y, type));
     }
 
-    public static TouchesPool getInstance() {
-        if (m_instance == null) {
-            m_instance = new TouchesPool();
+    public Touch GetTouch() {
+        Touch res = null;
+
+        if(m_touches.size() > 0) {
+            res = m_touches.get(m_touches.size() - 1);
+            m_touches.remove(m_touches.size() - 1);
         }
 
-        return m_instance;
+        return res;
     }
 }

@@ -32,6 +32,7 @@ import android.widget.RelativeLayout;
 
 import com.luanvotrong.CastingServer.ClientPool;
 import com.luanvotrong.CastingServer.NsdHelper;
+import com.luanvotrong.CastingServer.TouchesPool;
 
 import static android.R.attr.onClick;
 import static android.R.attr.radius;
@@ -58,15 +59,18 @@ public class DrawingView extends View {
     }
 
     public void setPos(float x, float y) {
-        m_x = x;
-        m_y = y;
+        TouchesPool.getInstance().AddTouch(x, y, 0);
     }
 
     @Override
     protected void onDraw(Canvas c) {
         super.onDraw(c);
         Log.d(TAG, "draw");
-        c.drawCircle(m_x, m_y, 50, m_paint);
+        TouchesPool.Touch touch = TouchesPool.getInstance().GetTouch();
+        if(touch != null)
+        {
+            c.drawCircle(touch.m_x, touch.m_y, 50, m_paint);
+        }
 
         invalidate();
     }

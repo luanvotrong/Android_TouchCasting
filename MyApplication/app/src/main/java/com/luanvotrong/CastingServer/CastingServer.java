@@ -45,4 +45,7 @@ import static android.R.attr.y;
 public class CastingServer {
     private String TAG = "Lulu CastingServer";
 
+    public void addTouch() {
+
+    }
 }
