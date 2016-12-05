@@ -58,20 +58,22 @@ public class CastingMgr {
             while (!Thread.currentThread().isInterrupted()) {
                 if (m_touches.size() > 0) {
                     String touch = m_touches.get(m_touches.size() - 1);
-                    String[] infos = touch.split(":");
-                    long downTime = SystemClock.uptimeMillis();
-                    long eventTime = SystemClock.uptimeMillis() + 0;
-                    int metaState = 0;
-                    MotionEvent motionEvent = MotionEvent.obtain(
-                            downTime,
-                            eventTime,
-                            Integer.parseInt(infos[2]),
-                            Float.parseFloat(infos[0]) * m_screenW,
-                            Float.parseFloat(infos[1]) * m_screenH,
-                            metaState
-                    );
+                    if(touch != null) {
+                        String[] infos = touch.split(":");
+                        long downTime = SystemClock.uptimeMillis();
+                        long eventTime = SystemClock.uptimeMillis() + 0;
+                        int metaState = 0;
+                        MotionEvent motionEvent = MotionEvent.obtain(
+                                downTime,
+                                eventTime,
+                                Integer.parseInt(infos[2]),
+                                Float.parseFloat(infos[0]) * m_screenW,
+                                Float.parseFloat(infos[1]) * m_screenH,
+                                metaState
+                        );
 
-                    m_context.dispatchTouchEvent(motionEvent);
+                        m_context.dispatchTouchEvent(motionEvent);
+                    }
                     m_touches.remove(m_touches.size() - 1);
                 }
             }

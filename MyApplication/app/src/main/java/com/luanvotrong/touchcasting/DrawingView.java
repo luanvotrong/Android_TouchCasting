@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
@@ -44,8 +45,20 @@ public class DrawingView extends SurfaceView {
         switch (type) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN: {
-                Circle circle = new Circle(id, x, y);
+                Circle circle = null;
+                for (int i = 0; i < m_circles.size(); i++) {
+                    Circle temp = m_circles.get(i);
+                    if (temp.m_id == id) {
+                        circle = temp;
+                        break;
+                    }
+                }
+
+                if(circle == null) {
+                    circle = new Circle(id, x, y);
+                }
                 m_circles.add(circle);
+                Log.d(TAG, id + " down");
                 break;
             }
             case MotionEvent.ACTION_MOVE: {
@@ -54,6 +67,7 @@ public class DrawingView extends SurfaceView {
                     if (circle.m_id == id) {
                         circle.m_x = x;
                         circle.m_y = y;
+                        Log.d(TAG, id + " move");
                         break;
                     }
                 }
@@ -64,6 +78,7 @@ public class DrawingView extends SurfaceView {
                 for (int i = 0; i < m_circles.size(); i++) {
                     if (m_circles.get(i).m_id == id) {
                         m_circles.remove(i);
+                        Log.d(TAG, id + " up");
                         break;
                     }
                 }
@@ -73,6 +88,7 @@ public class DrawingView extends SurfaceView {
                 for (int i = 0; i < m_circles.size(); i++) {
                     if (m_circles.get(i).m_id == id) {
                         m_circles.remove(i);
+                        Log.d(TAG, id + " cancel");
                         break;
                     }
                 }
