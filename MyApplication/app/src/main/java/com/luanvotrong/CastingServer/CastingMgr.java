@@ -106,7 +106,7 @@ public class CastingMgr {
                 DatagramSocket s = new DatagramSocket();
                 InetAddress local = getBroadcastAddress();
                 while (!Thread.currentThread().isInterrupted()) {
-                    TouchesPool.Touch touch = m_touchesPool.GetTouch();
+                    Touch touch = m_touchesPool.GetTouch();
                     if (touch != null) {
                         float pX = touch.m_x / m_screenW;
                         float pY = touch.m_y /m_screenH;

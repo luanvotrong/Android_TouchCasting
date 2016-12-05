@@ -1,43 +1,22 @@
 package com.luanvotrong.touchcasting;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.view.Surface;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.luanvotrong.CastingServer.CastingMgr;
-import com.luanvotrong.CastingServer.ClientPool;
-import com.luanvotrong.CastingServer.NsdHelper;
 import com.luanvotrong.CastingServer.TouchesPool;
-
-import static android.R.attr.onClick;
-import static android.R.attr.radius;
-import static android.R.attr.x;
-import static android.R.attr.y;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -52,8 +31,6 @@ public class MainActivity extends AppCompatActivity {
     private CAST_TYPE m_type = CAST_TYPE.NONE;
 
     private String TAG = "Lulu MainActivity";
-    private Paint m_paint = new Paint();
-    private MainActivity m_self = this;
 
     private DrawingView m_View;
     private Button m_btnServer;
@@ -128,8 +105,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
+        // get pointer index from the event object
         int pointerIndex = motionEvent.getActionIndex();
-        if (pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
+
+        // get pointer ID
+        //hdz add void to crash from google log
+        if(pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
             return false;
 
         int pointerId = motionEvent.getPointerId(pointerIndex);
@@ -138,10 +119,10 @@ public class MainActivity extends AppCompatActivity {
 
         switch(m_type) {
             case CASTER:
-                m_touchesPool.AddTouch(x, y, motionEvent.getAction());
+                m_touchesPool.AddTouch(pointerId, x, y, motionEvent.getAction());
                 break;
             case RECEIVER:
-                m_View.setTouch(x, y);
+                m_View.setTouch(pointerId, x, y, motionEvent.getAction());
                 break;
         }
 
