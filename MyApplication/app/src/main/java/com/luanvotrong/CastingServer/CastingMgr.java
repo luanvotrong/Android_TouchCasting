@@ -132,7 +132,6 @@ public class CastingMgr {
                         String mess = "" + pX + ":" + pY + ":" + touch.m_type;
                         int msg_length = mess.length();
                         byte[] message = mess.getBytes();
-
                         DatagramPacket p = new DatagramPacket(message, msg_length, local, m_udpPort);
                         s.send(p);
                         Log.d(TAG, "sent");

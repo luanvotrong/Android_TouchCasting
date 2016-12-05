@@ -29,12 +29,6 @@ public class NsdHelper {
 
     private Context m_context;
 
-    private ClientPool m_clientPool;
-
-    public void setClientPool(ClientPool clientPool) {
-        m_clientPool = clientPool;
-    }
-
     public void init(Context ctx) {
         m_context = ctx;
         m_nsdManager = (NsdManager) m_context.getSystemService(Context.NSD_SERVICE);
@@ -70,7 +64,7 @@ public class NsdHelper {
                 // Save the service name.  Android may have changed it in order to
                 // resolve a conflict, so update the name you initially requested
                 // with the name Android actually used.
-                //mServiceName = NsdServiceInfo.getServiceName();
+                SERVICE_NAME = NsdServiceInfo.getServiceName();
                 Log.e(TAG, "Registration succeed");
             }
 

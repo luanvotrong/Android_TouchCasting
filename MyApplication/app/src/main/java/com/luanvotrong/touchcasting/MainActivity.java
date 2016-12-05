@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.luanvotrong.CastingServer.CastingMgr;
+import com.luanvotrong.CastingServer.NsdHelper;
 import com.luanvotrong.CastingServer.TouchesPool;
 
 /**
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private String TAG = "Lulu MainActivity";
 
     private DrawingView m_View;
+    private NsdHelper m_nsdHelper;
     private Button m_btnServer;
     private Button m_btnClient;
 
@@ -63,23 +65,28 @@ public class MainActivity extends AppCompatActivity {
         m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         m_View.setEnabled(false);
 
+        m_nsdHelper = new NsdHelper();
+        m_nsdHelper.init(this);
+
         m_touchesPool = new TouchesPool();
         m_castingMgr = new CastingMgr(this,m_touchesPool);
         m_btnServer = (Button) findViewById(R.id.Server);
         m_btnServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_castingMgr.initCaster();
-                m_type = CAST_TYPE.CASTER;
+                //m_castingMgr.initCaster();
+                //m_type = CAST_TYPE.CASTER;
+                m_nsdHelper.discoverServices();
             }
         });
         m_btnClient = (Button) findViewById(R.id.Client);
         m_btnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_castingMgr.initReceiver();
-                setContentView(m_View);
-                m_type = CAST_TYPE.RECEIVER;
+                //m_castingMgr.initReceiver();
+                //setContentView(m_View);
+                //m_type = CAST_TYPE.RECEIVER;
+                m_nsdHelper.registerService();
             }
         });
     }
@@ -97,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         m_castingMgr.destroy();
+        m_nsdHelper.tearDown();
     }
 
     /**
