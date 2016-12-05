@@ -51,6 +51,23 @@ public class CastingMgr {
         m_touchesInjector.start();
     }
 
+    public void destroy() {
+        if(m_broadReceiver != null) {
+            m_broadReceiver.interrupt();
+            m_broadReceiver = null;
+        }
+
+        if(m_touchesInjector != null) {
+            m_touchesInjector.interrupt();
+            m_touchesInjector = null;
+        }
+
+        if(m_receiver != null) {
+            m_receiver.interrupt();
+            m_receiver = null;
+        }
+    }
+
     //////////////////////////////////////////////Touch Injector//////////////////////////////////////
     private class TouchesInjector implements Runnable {
         @Override
