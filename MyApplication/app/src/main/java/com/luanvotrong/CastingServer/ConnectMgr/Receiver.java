@@ -31,6 +31,7 @@ public class Receiver {
     private Thread m_connectThread;
     private Thread m_receiverThread;
     private Socket m_socket;
+    private ArrayList<String> m_touches;
 
     private class ConnectWorker implements Runnable {
         private long m_last;
@@ -56,9 +57,20 @@ public class Receiver {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                //Receiving
+                /*
+                byte[] message = new byte[1500];
+                DatagramPacket p = new DatagramPacket(message, message.length);
+                s.receive(p);
+                String mess = new String(message, 0, p.getLength());
+                m_touches.add(mess);
+                Log.d(TAG, mess);
+                */
             }
         }
+    }
+
+    public ArrayList<String> getTouches() {
+        return m_touches;
     }
 
     public void onFoundCaster() {
@@ -75,6 +87,8 @@ public class Receiver {
     }
 
     public void start() {
+        m_touches = new ArrayList<String>();
+
         if (m_listener == null) {
             m_listener = new Listener();
         }

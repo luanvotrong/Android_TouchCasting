@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 
+import com.luanvotrong.CastingServer.Touch;
+import com.luanvotrong.CastingServer.TouchesPool;
 import com.luanvotrong.touchcasting.MainActivity;
 
 import java.io.IOException;
@@ -28,7 +30,9 @@ public class Caster {
     private Shouter m_shouter;
     private ServerSocket m_serverSocket;
     private ArrayList<Socket> m_receiverSockets;
-
+    private TouchesPool m_touchesPool;
+    private float m_screenW;
+    private float m_screenH;
     private Thread m_serverSocketThread;
     private Thread m_castingThread;
 
@@ -54,12 +58,34 @@ public class Caster {
             while (!Thread.currentThread().isInterrupted()) {
                 for (int i = 0; i < m_receiverSockets.size(); i++) {
                     //Send instruction;
+                    /*
+                    while (!Thread.currentThread().isInterrupted()) {
+                        Touch touch = m_touchesPool.GetTouch();
+                        if (touch != null) {
+                            float pX = touch.m_x / m_screenW;
+                            float pY = touch.m_y /m_screenH;
+                            String mess = "" + pX + ":" + pY + ":" + touch.m_type;
+                            int msg_length = mess.length();
+                            byte[] message = mess.getBytes();
+                            DatagramPacket p = new DatagramPacket(message, msg_length, local, m_udpPort);
+                            s.send(p);
+                            Log.d(TAG, "sent");
+                        }
+                    }
+                    */
                 }
             }
         }
     }
 
-    public void start(Context context) {
+    public void start(MainActivity context, TouchesPool touchesPool) {
+        m_touchesPool = touchesPool;
+        Display display = context.getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        m_screenW = size.x;
+        m_screenH = size.y;
+
         try {
             m_serverSocket = new ServerSocket(m_tcpPort);
         } catch (Exception e) {
