@@ -28,4 +28,21 @@ public class ConnectMgr {
     private ServerSocket m_serverSocket;
     private ArrayList<Socket> m_waitingClients = new ArrayList<Socket>();
 
+    private Context m_context;
+    private Caster m_caster;
+    private Receiver m_receiver;
+
+    public ConnectMgr(Context ctx) {
+        m_context = ctx;
+    }
+
+    public void startCasting() {
+        m_caster = new Caster();
+        m_caster.start(m_context);
+    }
+
+    public void startReceiving() {
+        m_receiver = new Receiver();
+        m_receiver.start();
+    }
 }

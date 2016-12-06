@@ -25,14 +25,32 @@ public class Listener {
     private int m_udpPort = 63678;
     private int m_tcpPort = 63679;
     private String m_serviceName = "TouchCasting";
-
-    private ArrayList<InetAddress> m_waitingRegistrators;
+    private InetAddress m_shouterAddress;
     private Thread m_listeningThread;
 
+    public enum STATE {
+        LISTENING,
+        LISTENED
+    }
+    private STATE m_state;
+
+    public void setState(STATE state) {
+        m_state = state;
+    }
+
+    public STATE getState() {
+        return m_state;
+    }
+
+    public InetAddress getShouterAddress() {
+        return m_shouterAddress;
+    }
+
     public void startListening() {
-        m_waitingRegistrators = new ArrayList<InetAddress>();
         m_listeningThread = new Thread(new ListenWorker());
         m_listeningThread.start();
+
+        setState(STATE.LISTENING);
     }
 
     public void stopListening() {
@@ -56,8 +74,8 @@ public class Listener {
                     s.receive(p);
                     String mess = new String(message, 0, p.getLength());
                     if(mess.equalsIgnoreCase(m_serviceName)) {
-                        InetAddress address = p.getAddress();
-                        m_waitingRegistrators.add(address);
+                        m_shouterAddress = p.getAddress();
+                        setState(STATE.LISTENED);
                     }
                 }
             }
