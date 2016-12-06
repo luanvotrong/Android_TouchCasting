@@ -80,6 +80,7 @@ public class Caster {
 
     public void start(MainActivity context, TouchesPool touchesPool) {
         m_touchesPool = touchesPool;
+        m_receiverSockets = new ArrayList<>();
         Display display = context.getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);

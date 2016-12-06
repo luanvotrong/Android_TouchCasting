@@ -74,19 +74,19 @@ public class MainActivity extends AppCompatActivity {
         m_btnServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //m_castingMgr.initCaster();
-                //m_type = CAST_TYPE.CASTER;
-                m_nsdHelper.discoverServices();
+                m_castingMgr.initCaster();
+                m_type = CAST_TYPE.CASTER;
+                //m_nsdHelper.discoverServices();
             }
         });
         m_btnClient = (Button) findViewById(R.id.Client);
         m_btnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //m_castingMgr.initReceiver();
-                //setContentView(m_View);
-                //m_type = CAST_TYPE.RECEIVER;
-                m_nsdHelper.registerService();
+                m_castingMgr.initReceiver();
+                setContentView(m_View);
+                m_type = CAST_TYPE.RECEIVER;
+                //m_nsdHelper.registerService();
             }
         });
     }
