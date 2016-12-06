@@ -35,6 +35,7 @@ public class CastingMgr {
 
     public CastingMgr(MainActivity context, TouchesPool touchesPool) {
         m_context = context;
+        m_touchesPool = touchesPool;
 
         Display display = m_context.getWindowManager().getDefaultDisplay();
         Point size = new Point();

@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 
 import com.luanvotrong.touchcasting.MainActivity;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -57,14 +58,14 @@ public class Receiver {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                /*
-                byte[] message = new byte[1500];
-                DatagramPacket p = new DatagramPacket(message, message.length);
-                s.receive(p);
-                String mess = new String(message, 0, p.getLength());
-                m_touches.add(mess);
-                Log.d(TAG, mess);
-                */
+                try {
+                    DataInputStream dis = new DataInputStream(m_socket.getInputStream());
+                    String mess = dis.readUTF();
+                    m_touches.add(mess);
+                    Log.d(TAG, mess);
+                } catch(Exception e) {
+                    Log.d(TAG, e.toString());
+                }
             }
         }
     }

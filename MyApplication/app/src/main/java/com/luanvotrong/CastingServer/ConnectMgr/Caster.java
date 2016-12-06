@@ -14,6 +14,7 @@ import com.luanvotrong.CastingServer.Touch;
 import com.luanvotrong.CastingServer.TouchesPool;
 import com.luanvotrong.touchcasting.MainActivity;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -58,21 +59,20 @@ public class Caster {
             while (!Thread.currentThread().isInterrupted()) {
                 for (int i = 0; i < m_receiverSockets.size(); i++) {
                     //Send instruction;
-                    /*
-                    while (!Thread.currentThread().isInterrupted()) {
-                        Touch touch = m_touchesPool.GetTouch();
-                        if (touch != null) {
-                            float pX = touch.m_x / m_screenW;
-                            float pY = touch.m_y /m_screenH;
-                            String mess = "" + pX + ":" + pY + ":" + touch.m_type;
-                            int msg_length = mess.length();
-                            byte[] message = mess.getBytes();
-                            DatagramPacket p = new DatagramPacket(message, msg_length, local, m_udpPort);
-                            s.send(p);
-                            Log.d(TAG, "sent");
+                    Touch touch = m_touchesPool.GetTouch();
+                    if (touch != null) {
+                        float pX = touch.m_x / m_screenW;
+                        float pY = touch.m_y / m_screenH;
+                        String mess = "" + pX + ":" + pY + ":" + touch.m_type;
+                        Socket socket = m_receiverSockets.get(i);
+                        try {
+                            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+                            dos.writeUTF(mess);
+                        } catch (Exception e) {
+
                         }
+                        Log.d(TAG, "sent");
                     }
-                    */
                 }
             }
         }
