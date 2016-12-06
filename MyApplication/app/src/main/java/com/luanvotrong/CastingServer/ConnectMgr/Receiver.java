@@ -28,48 +28,14 @@ public class Receiver {
     private String TAG = "Lulu Receiver";
     private String m_serviceName = "TouchCasting";
     private Listener m_listener;
-    private Thread m_recieverThread;
+    private Thread m_connectThread;
+    private Thread m_receiverThread;
     private Socket m_socket;
 
-    private enum STATE {
-        FINDING_RECEIVER,
-        CONNECTING_RECEIVER,
-        CONNECTED_RECEIVER
-    }
-
-    private STATE m_state;
-
-    public void setState(STATE state) {
-        m_state = state;
-        switch (m_state) {
-            case FINDING_RECEIVER:
-                if (m_listener == null) {
-                    m_listener = new Listener();
-                }
-                m_listener.startListening();
-
-                m_recieverThread = new Thread(new ReceiverWorker());
-                m_recieverThread.start();
-                break;
-            case CONNECTING_RECEIVER:
-                m_listener.stopListening();
-                m_recieverThread.interrupt();
-                try {
-                    m_socket = new Socket(m_listener.getShouterAddress(), m_tcpPort);
-                } catch (Exception e) {
-                    Log.d(TAG, e.toString());
-                }
-                m_state = STATE.CONNECTED_RECEIVER;
-                break;
-            case CONNECTED_RECEIVER:
-                break;
-        }
-    }
-
-    private class ReceiverWorker implements Runnable {
+    private class ConnectWorker implements Runnable {
         private long m_last;
 
-        public ReceiverWorker() {
+        public ConnectWorker() {
             m_last = System.currentTimeMillis();
         }
 
@@ -78,14 +44,47 @@ public class Receiver {
             while (!Thread.currentThread().isInterrupted()) {
                 if (System.currentTimeMillis() - m_last > 1000) {
                     if (m_listener.getState() == Listener.STATE.LISTENED) {
-                        setState(STATE.CONNECTING_RECEIVER);
+                        onFoundCaster();
                     }
                 }
             }
         }
     }
 
+    private class ReceiverWorker implements Runnable {
+
+        @Override
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                //Receiving
+            }
+        }
+    }
+
+    public void onFoundCaster() {
+        m_listener.stopListening();
+        m_connectThread.interrupt();
+        try {
+            m_socket = new Socket(m_listener.getShouterAddress(), m_tcpPort);
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+        }
+
+        m_receiverThread = new Thread(new ReceiverWorker());
+        m_receiverThread.start();
+    }
+
     public void start() {
-        setState(STATE.FINDING_RECEIVER);
+        if (m_listener == null) {
+            m_listener = new Listener();
+        }
+        m_listener.startListening();
+
+        m_connectThread = new Thread(new ConnectWorker());
+        m_connectThread.start();
+    }
+
+    public void stop() {
+
     }
 }
