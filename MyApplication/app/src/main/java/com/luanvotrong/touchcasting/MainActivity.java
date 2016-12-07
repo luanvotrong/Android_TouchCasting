@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TouchesPool m_touchesPool;
     private CastingMgr m_castingMgr;
+    private MainActivity self = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

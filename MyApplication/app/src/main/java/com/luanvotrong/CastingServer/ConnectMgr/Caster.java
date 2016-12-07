@@ -9,6 +9,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import com.luanvotrong.CastingServer.Touch;
 import com.luanvotrong.CastingServer.TouchesPool;
@@ -36,6 +37,7 @@ public class Caster {
     private float m_screenH;
     private Thread m_serverSocketThread;
     private Thread m_castingThread;
+    private Context m_context;
 
     private class ServerSocketWorker implements Runnable {
 
@@ -45,6 +47,12 @@ public class Caster {
                 try {
                     Socket socket = m_serverSocket.accept();
                     m_receiverSockets.add(socket);
+                    ((MainActivity)m_context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(m_context, "Connected " + m_receiverSockets.size() + " client", Toast.LENGTH_LONG).show();
+                        }
+                    });
                 } catch (Exception e) {
                     Log.d(TAG, e.toString());
                 }
@@ -79,6 +87,7 @@ public class Caster {
     }
 
     public void start(MainActivity context, TouchesPool touchesPool) {
+        m_context = context;
         m_touchesPool = touchesPool;
         m_receiverSockets = new ArrayList<>();
         Display display = context.getWindowManager().getDefaultDisplay();
