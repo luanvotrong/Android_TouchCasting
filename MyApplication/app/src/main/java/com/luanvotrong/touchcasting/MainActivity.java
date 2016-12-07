@@ -124,17 +124,19 @@ public class MainActivity extends AppCompatActivity {
         if(pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
             return false;
 
-        int pointerId = motionEvent.getPointerId(pointerIndex);
-        float x = motionEvent.getX(pointerIndex);
-        float y = motionEvent.getY(pointerIndex);
+        for(int size = motionEvent.getPointerCount(), i = 0; i<size; i++) {
+            int pointerId = motionEvent.getPointerId(i);
+            float x = motionEvent.getX(i);
+            float y = motionEvent.getY(i);
 
-        switch(m_type) {
-            case CASTER:
-                m_touchesPool.AddTouch(pointerId, x, y, motionEvent.getAction());
-                break;
-            case RECEIVER:
-                m_View.setTouch(pointerId, x, y, motionEvent.getAction());
-                break;
+            switch (m_type) {
+                case CASTER:
+                    m_touchesPool.AddTouch(pointerId, x, y, motionEvent.getAction());
+                    break;
+                case RECEIVER:
+                    m_View.setTouch(pointerId, x, y, motionEvent.getAction());
+                    break;
+            }
         }
 
         return false;
