@@ -65,9 +65,9 @@ public class Caster {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
+                Touch touch = m_touchesPool.GetTouch();
                 for (int i = 0; i < m_receiverSockets.size(); i++) {
                     //Send instruction;
-                    Touch touch = m_touchesPool.GetTouch();
                     if (touch != null) {
                         float pX = touch.m_x / m_screenW;
                         float pY = touch.m_y / m_screenH;

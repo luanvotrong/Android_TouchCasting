@@ -1,10 +1,6 @@
 package com.luanvotrong.CastingServer;
 
-
-import android.content.Context;
 import android.graphics.Point;
-import android.net.DhcpInfo;
-import android.net.wifi.WifiManager;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Display;
@@ -14,11 +10,6 @@ import com.luanvotrong.CastingServer.ConnectMgr.Caster;
 import com.luanvotrong.CastingServer.ConnectMgr.Receiver;
 import com.luanvotrong.touchcasting.MainActivity;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.util.ArrayList;
 
 
