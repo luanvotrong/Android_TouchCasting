@@ -47,7 +47,7 @@ public class Caster {
                 try {
                     Socket socket = m_serverSocket.accept();
                     m_receiverSockets.add(socket);
-                    ((MainActivity)m_context).runOnUiThread(new Runnable() {
+                    ((MainActivity) m_context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(m_context, "Connected " + m_receiverSockets.size() + " client", Toast.LENGTH_LONG).show();
@@ -66,12 +66,12 @@ public class Caster {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 Touch touch = m_touchesPool.GetTouch();
-                for (int i = 0; i < m_receiverSockets.size(); i++) {
+                if (touch != null) {
                     //Send instruction;
-                    if (touch != null) {
-                        float pX = touch.m_x / m_screenW;
-                        float pY = touch.m_y / m_screenH;
-                        String mess = "" + pX + ":" + pY + ":" + touch.m_type;
+                    float pX = touch.m_x / m_screenW;
+                    float pY = touch.m_y / m_screenH;
+                    String mess = "" + pX + ":" + pY + ":" + touch.m_type;
+                    for (int i = 0; i < m_receiverSockets.size(); i++) {
                         Socket socket = m_receiverSockets.get(i);
                         try {
                             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());

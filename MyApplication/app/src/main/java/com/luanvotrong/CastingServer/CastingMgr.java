@@ -57,6 +57,8 @@ public class CastingMgr {
 
     //////////////////////////////////////////////Touch Injector//////////////////////////////////////
     private class TouchesInjector implements Runnable {
+        private String TAG = "Lulu TouchesInjector";
+
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
@@ -64,6 +66,7 @@ public class CastingMgr {
                 if (touches.size() > 0) {
                     String touch = touches.get(touches.size() - 1);
                     if(touch != null) {
+                        Log.d(TAG, touch);
                         String[] infos = touch.split(":");
                         long downTime = SystemClock.uptimeMillis();
                         long eventTime = SystemClock.uptimeMillis() + 0;
