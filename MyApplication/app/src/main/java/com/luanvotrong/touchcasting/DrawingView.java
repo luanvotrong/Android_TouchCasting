@@ -56,8 +56,10 @@ public class DrawingView extends SurfaceView {
 
                 if(circle == null) {
                     circle = new Circle(id, x, y);
+                    m_circles.add(circle);
                 }
-                m_circles.add(circle);
+                circle.m_x = x;
+                circle.m_y = y;
                 Log.d(TAG, id + " down");
                 break;
             }
