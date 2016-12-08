@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -125,12 +126,13 @@ public class MainActivity extends AppCompatActivity {
 
             switch (m_type) {
                 case CASTER:
-                    m_touchesPool.AddTouch(pointerId, x, y, motionEvent.getAction());
+                    m_touchesPool.AddTouch(pointerId, x, y, motionEvent.getActionMasked());
                     break;
                 case RECEIVER:
-                    m_View.setTouch(pointerId, x, y, motionEvent.getAction());
+                    m_View.setTouch(pointerId, x, y, motionEvent.getActionMasked());
                     break;
             }
+            Log.d(TAG, "id " + pointerId + " action " + motionEvent.getActionMasked());
         }
 
         return false;

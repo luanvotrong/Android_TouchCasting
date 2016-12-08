@@ -73,8 +73,8 @@ public class Caster {
                         } catch (Exception e) {
 
                         }
-                        Log.d(TAG, "sent");
                     }
+                    Log.d(TAG, "sent " + mess);
                 }
             }
         }
