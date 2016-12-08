@@ -23,6 +23,7 @@ import com.luanvotrong.CastingServer.TouchesPool;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
+
 public class MainActivity extends AppCompatActivity {
     public enum CAST_TYPE {
         NONE,
@@ -40,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
     private TouchesPool m_touchesPool;
     private CastingMgr m_castingMgr;
-    private MainActivity self = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +107,6 @@ public class MainActivity extends AppCompatActivity {
         m_castingMgr.destroy();
         m_nsdHelper.tearDown();
     }
-
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {

@@ -2,23 +2,16 @@ package com.luanvotrong.CastingServer.ConnectMgr;
 
 
 import android.content.Context;
-import android.graphics.Point;
+import android.util.Log;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
-import android.os.SystemClock;
-import android.util.Log;
-import android.view.Display;
-import android.view.MotionEvent;
-
-import com.luanvotrong.touchcasting.MainActivity;
 
 import java.io.IOException;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
+
 
 public class Shouter {
     private String TAG = "Lulu Shouter";
@@ -74,7 +67,7 @@ public class Shouter {
                     DatagramSocket s = new DatagramSocket();
                     InetAddress local = getBroadcastAddress();
                     while (!Thread.currentThread().isInterrupted()) {
-                        if(System.currentTimeMillis() - m_last > 1000) {
+                        if (System.currentTimeMillis() - m_last > 1000) {
                             int msg_length = m_serviceName.length();
                             byte[] message = m_serviceName.getBytes();
                             DatagramPacket p = new DatagramPacket(message, msg_length, local, m_udpPort);

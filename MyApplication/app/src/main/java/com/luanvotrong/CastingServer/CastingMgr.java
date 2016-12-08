@@ -1,14 +1,16 @@
 package com.luanvotrong.CastingServer;
 
-import android.graphics.Point;
+import android.app.Activity;
+import android.content.Context;
 import android.os.SystemClock;
+import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
+import android.view.animation.AccelerateInterpolator;
 
 import com.luanvotrong.CastingServer.ConnectMgr.Caster;
 import com.luanvotrong.CastingServer.ConnectMgr.Receiver;
-import com.luanvotrong.touchcasting.MainActivity;
 
 import java.util.ArrayList;
 
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 public class CastingMgr {
     private int m_udpPort = 63678;
     private int m_tcpPort = 63677;
-    private MainActivity m_context;
+    private Context m_context;
     private TouchesPool m_touchesPool;
     private float m_screenW;
     private float m_screenH;
@@ -24,15 +26,13 @@ public class CastingMgr {
     private Caster m_caster;
     private Receiver m_receiver;
 
-    public CastingMgr(MainActivity context, TouchesPool touchesPool) {
+    public CastingMgr(Context context, TouchesPool touchesPool) {
         m_context = context;
         m_touchesPool = touchesPool;
 
-        Display display = m_context.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        m_screenW = size.x;
-        m_screenH = size.y;
+        DisplayMetrics display = context.getResources().getDisplayMetrics();
+        m_screenW = display.widthPixels;
+        m_screenH = display.heightPixels;
     }
 
     public void initCaster() {
@@ -80,7 +80,7 @@ public class CastingMgr {
                                 metaState
                         );
 
-                        m_context.dispatchTouchEvent(motionEvent);
+                        ((Activity)m_context).dispatchTouchEvent(motionEvent);
                     }
                     touches.remove(touches.size() - 1);
                 }

@@ -1,25 +1,19 @@
 package com.luanvotrong.CastingServer.ConnectMgr;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
-import android.net.DhcpInfo;
-import android.net.wifi.WifiManager;
-import android.os.SystemClock;
+import android.support.v4.app.ActivityCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.MotionEvent;
 import android.widget.Toast;
 
 import com.luanvotrong.CastingServer.Touch;
 import com.luanvotrong.CastingServer.TouchesPool;
-import com.luanvotrong.touchcasting.MainActivity;
 
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -47,7 +41,7 @@ public class Caster {
                 try {
                     Socket socket = m_serverSocket.accept();
                     m_receiverSockets.add(socket);
-                    ((MainActivity) m_context).runOnUiThread(new Runnable() {
+                    ((Activity) m_context).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             Toast.makeText(m_context, "Connected " + m_receiverSockets.size() + " client", Toast.LENGTH_LONG).show();
@@ -86,15 +80,13 @@ public class Caster {
         }
     }
 
-    public void start(MainActivity context, TouchesPool touchesPool) {
+    public void start(Context context, TouchesPool touchesPool) {
         m_context = context;
         m_touchesPool = touchesPool;
         m_receiverSockets = new ArrayList<>();
-        Display display = context.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        m_screenW = size.x;
-        m_screenH = size.y;
+        DisplayMetrics display = context.getResources().getDisplayMetrics();
+        m_screenW = display.widthPixels;
+        m_screenH = display.heightPixels;
 
         try {
             m_serverSocket = new ServerSocket(m_tcpPort);

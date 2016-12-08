@@ -12,8 +12,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 
-import com.luanvotrong.touchcasting.MainActivity;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.DatagramPacket;
