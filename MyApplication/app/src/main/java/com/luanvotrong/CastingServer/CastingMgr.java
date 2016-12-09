@@ -56,119 +56,31 @@ public class CastingMgr {
     //////////////////////////////////////////////Touch Injector//////////////////////////////////////
     private class TouchesInjector implements Runnable {
         private String TAG = "Lulu TouchesInjector";
-        private ArrayList<Touch> m_touches = new ArrayList<>();
-        private int m_touchType = -1;
 
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 ArrayList<String> touches = m_receiver.getTouches();
-                while (touches.size() > 0) {
+                if (touches.size() > 0) {
                     String touch = touches.get(touches.size() - 1);
-                    if (touch != null) {
+                    if(touch != null) {
                         Log.d(TAG, touch);
-                        preproccessTouches(touch);
-                        injectTouch();
-                        postInjectProccess();
+                        String[] infos = touch.split(":");
+                        long downTime = SystemClock.uptimeMillis();
+                        long eventTime = SystemClock.uptimeMillis() + 0;
+                        int metaState = 0;
+                        MotionEvent motionEvent = MotionEvent.obtain(
+                                downTime,
+                                eventTime,
+                                Integer.parseInt(infos[2]),
+                                Float.parseFloat(infos[0]) * m_screenW,
+                                Float.parseFloat(infos[1]) * m_screenH,
+                                metaState
+                        );
+
+                        ((Activity)m_context).dispatchTouchEvent(motionEvent);
                     }
                     touches.remove(touches.size() - 1);
-                }
-            }
-        }
-
-        private void preproccessTouches(String touch) {
-            String[] infos = touch.split(":");
-            int id = Integer.parseInt(infos[0]);
-            float x = Float.parseFloat(infos[1]);
-            float y = Float.parseFloat(infos[2]);
-            m_touchType = Integer.parseInt(infos[3]);
-            switch (m_touchType) {
-                case MotionEvent.ACTION_DOWN:
-                case MotionEvent.ACTION_POINTER_DOWN: {
-                    Touch tempTouch = null;
-                    for (int i = 0, size = m_touches.size(); i < size; i++) {
-                        if (m_touches.get(i).m_id == id) {
-                            tempTouch = m_touches.get(i);
-                        }
-                    }
-                    if (tempTouch == null) {
-                        tempTouch = new Touch(touch);
-                        m_touches.add(tempTouch);
-                    }
-                    tempTouch.m_id = id;
-                    tempTouch.m_x = x;
-                    tempTouch.m_y = y;
-                    tempTouch.m_type = m_touchType;
-                }
-                case MotionEvent.ACTION_MOVE:
-                case MotionEvent.ACTION_UP:
-                case MotionEvent.ACTION_POINTER_UP:
-                case MotionEvent.ACTION_CANCEL: {
-                    for (int i = 0, size = m_touches.size(); i < size; i++) {
-                        Touch tempTouch = m_touches.get(i);
-                        if (tempTouch.m_id == id) {
-                            tempTouch.m_x = x;
-                            tempTouch.m_y = y;
-                            tempTouch.m_type = m_touchType;
-                        }
-                    }
-                    break;
-                }
-                default: {
-                    break;
-                }
-            }
-        }
-
-        private void injectTouch() {
-            if (m_touches.size() > 0) {
-                int size = m_touches.size();
-                MotionEvent.PointerProperties[] pointerProperties = new MotionEvent.PointerProperties[size];
-                MotionEvent.PointerCoords[] pointerCoordses = new MotionEvent.PointerCoords[size];
-                for (int i = 0; i < size; i++) {
-                    pointerProperties[i] = new MotionEvent.PointerProperties();
-                    pointerProperties[i].id = m_touches.get(i).m_id;
-
-                    pointerCoordses[i] = new MotionEvent.PointerCoords();
-                    pointerCoordses[i].x = m_touches.get(i).m_x * m_screenW;
-                    pointerCoordses[i].y = m_touches.get(i).m_y * m_screenH;
-                }
-
-                long downTime = SystemClock.uptimeMillis();
-                long eventTime = SystemClock.uptimeMillis() + 0;
-                MotionEvent motionEvent = MotionEvent.obtain(
-                        downTime,
-                        eventTime,
-                        m_touchType,
-                        size,
-                        pointerProperties,
-                        pointerCoordses,
-                        0,
-                        1,
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                );
-
-                ((Activity) m_context).dispatchTouchEvent(motionEvent);
-            }
-        }
-
-        private void postInjectProccess() {
-            for (int i = 0, size = m_touches.size(); i < size; i++) {
-                Touch tempTouch = m_touches.get(i);
-                switch (tempTouch.m_type) {
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_POINTER_UP:
-                    case MotionEvent.ACTION_CANCEL: {
-                        m_touches.remove(i);
-                        size = m_touches.size();
-                        i--;
-                        break;
-                    }
                 }
             }
         }

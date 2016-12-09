@@ -64,7 +64,7 @@ public class Caster {
                     //Send instruction;
                     float pX = touch.m_x / m_screenW;
                     float pY = touch.m_y / m_screenH;
-                    String mess = touch.m_id + ":" + pX + ":" + pY + ":" + touch.m_type;
+                    String mess = "" + pX + ":" + pY + ":" + touch.m_type;
                     for (int i = 0; i < m_receiverSockets.size(); i++) {
                         Socket socket = m_receiverSockets.get(i);
                         try {
