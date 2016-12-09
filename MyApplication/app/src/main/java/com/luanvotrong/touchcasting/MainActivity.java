@@ -132,7 +132,6 @@ public class MainActivity extends AppCompatActivity {
                     m_View.setTouch(pointerId, x, y, motionEvent.getActionMasked());
                     break;
             }
-            Log.d(TAG, "id " + pointerId + " action " + motionEvent.getActionMasked());
         }
 
         return false;

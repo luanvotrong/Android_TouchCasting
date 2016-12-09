@@ -60,7 +60,6 @@ public class DrawingView extends SurfaceView {
                 }
                 circle.m_x = x;
                 circle.m_y = y;
-                Log.d(TAG, id + " down");
                 break;
             }
             case MotionEvent.ACTION_MOVE: {
@@ -69,7 +68,6 @@ public class DrawingView extends SurfaceView {
                     if (circle.m_id == id) {
                         circle.m_x = x;
                         circle.m_y = y;
-                        Log.d(TAG, id + " move");
                         break;
                     }
                 }
@@ -80,7 +78,6 @@ public class DrawingView extends SurfaceView {
                 for (int i = 0; i < m_circles.size(); i++) {
                     if (m_circles.get(i).m_id == id) {
                         m_circles.remove(i);
-                        Log.d(TAG, id + " up");
                         break;
                     }
                 }
@@ -90,7 +87,6 @@ public class DrawingView extends SurfaceView {
                 for (int i = 0; i < m_circles.size(); i++) {
                     if (m_circles.get(i).m_id == id) {
                         m_circles.remove(i);
-                        Log.d(TAG, id + " cancel");
                         break;
                     }
                 }

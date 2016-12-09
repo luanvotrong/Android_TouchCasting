@@ -69,10 +69,10 @@ public class CastingMgr {
                         Log.d(TAG, touch);
                         preproccessTouches(touch);
                         injectTouch();
+                        postInjectProccess();
                     }
                     touches.remove(touches.size() - 1);
                 }
-                postInjectProccess();
             }
         }
 
@@ -93,12 +93,12 @@ public class CastingMgr {
                     }
                     if (tempTouch == null) {
                         tempTouch = new Touch(touch);
+                        m_touches.add(tempTouch);
                     }
                     tempTouch.m_id = id;
                     tempTouch.m_x = x;
                     tempTouch.m_y = y;
                     tempTouch.m_type = m_touchType;
-                    m_touches.add(tempTouch);
                 }
                 case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_UP:
@@ -165,10 +165,11 @@ public class CastingMgr {
                     case MotionEvent.ACTION_POINTER_UP:
                     case MotionEvent.ACTION_CANCEL: {
                         m_touches.remove(i);
+                        size = m_touches.size();
+                        i--;
                         break;
                     }
                 }
-                break;
             }
         }
     }
