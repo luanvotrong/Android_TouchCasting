@@ -59,8 +59,9 @@ public class Caster {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                Touch touch = m_touchesPool.GetTouch();
-                if (touch != null) {
+
+                try {
+                    Touch touch = m_touchesPool.GetTouch();
                     //Send instruction;
                     float pX = touch.m_x / m_screenW;
                     float pY = touch.m_y / m_screenH;
@@ -75,6 +76,8 @@ public class Caster {
                         }
                     }
                     Log.d(TAG, "sent " + mess);
+                } catch (Exception e) {
+
                 }
             }
         }

@@ -14,14 +14,15 @@ public class TouchesPool {
         m_touches.add(new Touch(id, x, y, type));
     }
 
-    public Touch GetTouch() {
-        Touch res = null;
-
-        if(m_touches.size() > 0) {
-            res = m_touches.get(m_touches.size() - 1);
+    public Touch GetTouch() throws Exception {
+        try
+        {
+            Touch res = m_touches.get(m_touches.size() - 1);
             m_touches.remove(m_touches.size() - 1);
+            return res;
         }
-
-        return res;
+        catch (Exception e) {
+            throw new Exception();
+        }
     }
 }
