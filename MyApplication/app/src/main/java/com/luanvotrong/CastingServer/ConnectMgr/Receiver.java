@@ -1,23 +1,12 @@
 package com.luanvotrong.CastingServer.ConnectMgr;
 
-
-import android.content.Context;
-import android.graphics.Point;
-import android.net.DhcpInfo;
-import android.net.sip.SipAudioCall;
-import android.net.wifi.WifiManager;
 import android.os.SystemClock;
-import android.provider.Settings;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 
+import com.luanvotrong.CastingServer.CastingMgr;
+
 import java.io.DataInputStream;
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -27,6 +16,7 @@ public class Receiver {
     private String TAG = "Lulu Receiver";
     private String m_serviceName = "TouchCasting";
     private Listener m_listener;
+    private CastingMgr m_castingMgr;
     private Thread m_connectThread;
     private Thread m_receiverThread;
     private Socket m_socket;
@@ -59,8 +49,11 @@ public class Receiver {
                 try {
                     DataInputStream dis = new DataInputStream(m_socket.getInputStream());
                     String mess = dis.readUTF();
-                    m_touches.add(mess);
-                    Log.d(TAG, mess);
+                    String[] infos = mess.split(":");
+                    synchronized (m_touches) {
+                        m_touches.add(mess);
+                        Log.d(TAG, mess);
+                    }
                 } catch(Exception e) {
                     Log.d(TAG, e.toString());
                 }
@@ -77,6 +70,7 @@ public class Receiver {
         m_connectThread.interrupt();
         try {
             m_socket = new Socket(m_listener.getShouterAddress(), m_tcpPort);
+            m_castingMgr.resetDimension();
         } catch (Exception e) {
             Log.d(TAG, e.toString());
         }
@@ -85,7 +79,8 @@ public class Receiver {
         m_receiverThread.start();
     }
 
-    public void start() {
+    public void start(CastingMgr castingMgr) {
+        m_castingMgr = castingMgr;
         m_touches = new ArrayList<String>();
 
         if (m_listener == null) {

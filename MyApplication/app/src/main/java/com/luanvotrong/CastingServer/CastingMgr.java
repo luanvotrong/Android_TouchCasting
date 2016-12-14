@@ -33,14 +33,20 @@ public class CastingMgr {
         m_screenH = display.heightPixels;
     }
 
+    public void resetDimension() {
+        DisplayMetrics display = m_context.getResources().getDisplayMetrics();
+        m_screenW = display.widthPixels;
+        m_screenH = display.heightPixels;
+    }
+
     public void initCaster() {
         m_caster = new Caster();
-        m_caster.start(m_context, m_touchesPool);
+        m_caster.start(m_context, m_touchesPool, this);
     }
 
     public void initReceiver() {
         m_receiver = new Receiver();
-        m_receiver.start();
+        m_receiver.start(this);
 
         m_touchesInjector = new Thread(new TouchesInjector());
         m_touchesInjector.start();
@@ -63,16 +69,18 @@ public class CastingMgr {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 ArrayList<String> touches = m_receiver.getTouches();
-                while (touches.size() > 0) {
-                    String touch = touches.get(touches.size() - 1);
-                    if (touch != null) {
-                        Log.d(TAG, touch);
-                        preproccessTouches(touch);
-                        injectTouch();
-                        postInjectProccess();
+                synchronized (touches) {
+                    while (touches.size() > 0) {
+                        String touch = touches.get(touches.size() - 1);
+                        if (touch != null) {
+                            Log.d(TAG, touch);
+                            preproccessTouches(touch);
+                            injectTouch();
+                            touches.remove(0);
+                        }
                     }
-                    touches.remove(touches.size() - 1);
                 }
+                postInjectProccess();
             }
         }
 
