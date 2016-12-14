@@ -126,11 +126,9 @@ public class MainActivity extends AppCompatActivity {
 
             switch (m_type) {
                 case CASTER:
-                    if(motionEvent.getActionMasked() == MotionEvent.ACTION_POINTER_UP || motionEvent.getActionMasked() == MotionEvent.ACTION_UP)
-                    {
-                        Log.d(TAG, "fsdafasddasdsafsda");
+                    synchronized (m_touchesPool) {
+                        m_touchesPool.AddTouch(pointerId, x, y, motionEvent.getActionMasked());
                     }
-                    m_touchesPool.AddTouch(pointerId, x, y, motionEvent.getActionMasked());
                     break;
                 case RECEIVER:
                     m_View.setTouch(pointerId, x, y, motionEvent.getActionMasked());

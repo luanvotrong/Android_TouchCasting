@@ -64,21 +64,23 @@ public class Caster {
             while (!Thread.currentThread().isInterrupted()) {
 
                 try {
-                    Touch touch = m_touchesPool.GetTouch();
-                    //Send instruction;
-                    float pX = touch.m_x / m_screenW;
-                    float pY = touch.m_y / m_screenH;
-                    String mess = "" + pX + ":" + pY + ":" + touch.m_type;
-                    for (int i = 0; i < m_receiverSockets.size(); i++) {
-                        Socket socket = m_receiverSockets.get(i);
-                        try {
-                            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                            dos.writeUTF(mess);
-                        } catch (Exception e) {
+                    synchronized (m_touchesPool) {
+                        Touch touch = m_touchesPool.GetTouch();
+                        //Send instruction;
+                        float pX = touch.m_x / m_screenW;
+                        float pY = touch.m_y / m_screenH;
+                        String mess = "" + pX + ":" + pY + ":" + touch.m_type;
+                        for (int i = 0; i < m_receiverSockets.size(); i++) {
+                            Socket socket = m_receiverSockets.get(i);
+                            try {
+                                DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+                                dos.writeUTF(mess);
+                            } catch (Exception e) {
 
+                            }
                         }
+                        Log.d(TAG, "sent " + mess);
                     }
-                    Log.d(TAG, "sent " + mess);
                 } catch (Exception e) {
 
                 }
