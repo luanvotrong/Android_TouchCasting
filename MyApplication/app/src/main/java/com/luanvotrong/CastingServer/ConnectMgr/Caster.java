@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Display;
 import android.widget.Toast;
 
+import com.luanvotrong.CastingServer.CastingMgr;
 import com.luanvotrong.CastingServer.Touch;
 import com.luanvotrong.CastingServer.TouchesPool;
 
@@ -24,6 +25,7 @@ public class Caster {
     private String TAG = "Lulu Caster";
     private String m_serviceName = "TouchCasting";
     private Shouter m_shouter;
+    private CastingMgr m_castingMgr;
     private ServerSocket m_serverSocket;
     private ArrayList<Socket> m_receiverSockets;
     private TouchesPool m_touchesPool;
@@ -40,6 +42,7 @@ public class Caster {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     Socket socket = m_serverSocket.accept();
+                    m_castingMgr.resetDimension();
                     m_receiverSockets.add(socket);
                     ((Activity) m_context).runOnUiThread(new Runnable() {
                         @Override
@@ -83,7 +86,8 @@ public class Caster {
         }
     }
 
-    public void start(Context context, TouchesPool touchesPool) {
+    public void start(Context context, TouchesPool touchesPool, CastingMgr castingMgr) {
+        m_castingMgr = castingMgr;
         m_context = context;
         m_touchesPool = touchesPool;
         m_receiverSockets = new ArrayList<>();

@@ -33,14 +33,20 @@ public class CastingMgr {
         m_screenH = display.heightPixels;
     }
 
+    public void resetDimension() {
+        DisplayMetrics display = m_context.getResources().getDisplayMetrics();
+        m_screenW = display.widthPixels;
+        m_screenH = display.heightPixels;
+    }
+
     public void initCaster() {
         m_caster = new Caster();
-        m_caster.start(m_context, m_touchesPool);
+        m_caster.start(m_context, m_touchesPool, this);
     }
 
     public void initReceiver() {
         m_receiver = new Receiver();
-        m_receiver.start();
+        m_receiver.start(this);
 
         m_touchesInjector = new Thread(new TouchesInjector());
         m_touchesInjector.start();
@@ -67,11 +73,10 @@ public class CastingMgr {
                         Log.d(TAG, touch);
                         String[] infos = touch.split(":");
                         long downTime = SystemClock.uptimeMillis();
-                        long eventTime = SystemClock.uptimeMillis() + 0;
                         int metaState = 0;
                         MotionEvent motionEvent = MotionEvent.obtain(
                                 downTime,
-                                eventTime,
+                                downTime,
                                 Integer.parseInt(infos[2]),
                                 Float.parseFloat(infos[0]) * m_screenW,
                                 Float.parseFloat(infos[1]) * m_screenH,
