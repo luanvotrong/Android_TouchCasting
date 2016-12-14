@@ -1,6 +1,8 @@
 package com.luanvotrong.CastingServer.ConnectMgr;
 
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 
 import com.luanvotrong.CastingServer.CastingMgr;
 
@@ -47,8 +49,11 @@ public class Receiver {
                 try {
                     DataInputStream dis = new DataInputStream(m_socket.getInputStream());
                     String mess = dis.readUTF();
-                    m_touches.add(mess);
-                    Log.d(TAG, mess);
+                    String[] infos = mess.split(":");
+                    synchronized (m_touches) {
+                        m_touches.add(mess);
+                        Log.d(TAG, mess);
+                    }
                 } catch(Exception e) {
                     Log.d(TAG, e.toString());
                 }

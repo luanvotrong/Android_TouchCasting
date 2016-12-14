@@ -67,25 +67,27 @@ public class CastingMgr {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 ArrayList<String> touches = m_receiver.getTouches();
-                if (touches.size() > 0) {
-                    String touch = touches.get(touches.size() - 1);
-                    if(touch != null) {
-                        Log.d(TAG, touch);
-                        String[] infos = touch.split(":");
-                        long downTime = SystemClock.uptimeMillis();
-                        int metaState = 0;
-                        MotionEvent motionEvent = MotionEvent.obtain(
-                                downTime,
-                                downTime,
-                                Integer.parseInt(infos[2]),
-                                Float.parseFloat(infos[0]) * m_screenW,
-                                Float.parseFloat(infos[1]) * m_screenH,
-                                metaState
-                        );
+                synchronized (touches) {
+                    if (touches.size() > 0) {
+                        String touch = touches.get(touches.size() - 1);
+                        if (touch != null) {
+                            Log.d(TAG, touch);
+                            String[] infos = touch.split(":");
+                            long downTime = SystemClock.uptimeMillis();
+                            int metaState = 0;
+                            MotionEvent motionEvent = MotionEvent.obtain(
+                                    downTime,
+                                    downTime,
+                                    Integer.parseInt(infos[2]),
+                                    Float.parseFloat(infos[0]) * m_screenW,
+                                    Float.parseFloat(infos[1]) * m_screenH,
+                                    metaState
+                            );
 
-                        ((Activity)m_context).dispatchTouchEvent(motionEvent);
+                            ((Activity) m_context).dispatchTouchEvent(motionEvent);
+                        }
+                        touches.remove(touches.size() - 1);
                     }
-                    touches.remove(touches.size() - 1);
                 }
             }
         }

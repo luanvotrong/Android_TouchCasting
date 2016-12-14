@@ -1,5 +1,8 @@
 package com.luanvotrong.CastingServer;
 
+import android.util.Log;
+import android.view.MotionEvent;
+
 import java.util.ArrayList;
 
 /**
@@ -15,13 +18,11 @@ public class TouchesPool {
     }
 
     public Touch GetTouch() throws Exception {
-        try
-        {
+        try {
             Touch res = m_touches.get(m_touches.size() - 1);
             m_touches.remove(m_touches.size() - 1);
             return res;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new Exception();
         }
     }
