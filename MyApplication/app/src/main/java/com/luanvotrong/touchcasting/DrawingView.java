@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -22,11 +23,13 @@ public class DrawingView extends SurfaceView {
     private class Circle {
         public int m_id;
         public float m_x, m_y;
+        public int m_color;
 
         public Circle(int id, float x, float y) {
             m_id = id;
             m_x = x;
             m_y = y;
+            m_color = Color.rgb(0 + (int)(Math.random() * 255), 0 + (int)(Math.random() * 255), 0 + (int)(Math.random() * 255));
         }
     }
 
@@ -103,6 +106,7 @@ public class DrawingView extends SurfaceView {
         super.onDraw(c);
         for (int i = 0; i < m_circles.size(); i++) {
             Circle circle = m_circles.get(i);
+            m_paint.setColor(circle.m_color);
             c.drawCircle(circle.m_x, circle.m_y, 50, m_paint);
         }
 
