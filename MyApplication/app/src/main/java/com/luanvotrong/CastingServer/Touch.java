@@ -8,12 +8,14 @@ public class Touch {
     public int m_id;
     public float m_x, m_y;
     public int m_type;
+    public int m_typeMasked;
 
-    public Touch(int id, float x, float y, int type) {
+    public Touch(int id, float x, float y, int type, int typeMasked) {
         m_id = id;
         m_x = x;
         m_y = y;
         m_type = type;
+        m_typeMasked = typeMasked;
     }
 
     public Touch(String info) {

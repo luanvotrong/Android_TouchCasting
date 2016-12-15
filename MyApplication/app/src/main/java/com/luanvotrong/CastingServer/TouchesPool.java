@@ -13,8 +13,8 @@ public class TouchesPool {
     private String TAG = "Lulu CastingPool";
     private ArrayList<Touch> m_touches = new ArrayList<Touch>();
 
-    public void AddTouch(int id, float x, float y, int type) {
-        m_touches.add(new Touch(id, x, y, type));
+    public void AddTouch(int id, float x, float y, int type, int typeMasked) {
+        m_touches.add(new Touch(id, x, y, type, typeMasked));
     }
 
     public Touch GetTouch() throws Exception {

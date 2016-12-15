@@ -12,6 +12,7 @@ import org.json.*;
 import com.luanvotrong.CastingServer.ConnectMgr.Caster;
 import com.luanvotrong.CastingServer.ConnectMgr.Receiver;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 
@@ -73,7 +74,6 @@ public class CastingMgr {
                     while (touches.size() > 0) {
                         String touch = touches.get(touches.size() - 1);
                         if (touch != null) {
-                            Log.d(TAG, touch);
                             preproccessTouches(touch);
                             injectTouch();
                             touches.remove(0);
@@ -129,40 +129,89 @@ public class CastingMgr {
         }
 
         private void injectTouch() {
-            if (m_touches.size() > 0) {
-                int size = m_touches.size();
-                MotionEvent.PointerProperties[] pointerProperties = new MotionEvent.PointerProperties[size];
-                MotionEvent.PointerCoords[] pointerCoordses = new MotionEvent.PointerCoords[size];
-                for (int i = 0; i < size; i++) {
-                    pointerProperties[i] = new MotionEvent.PointerProperties();
-                    pointerProperties[i].id = m_touches.get(i).m_id;
+            int size = m_touches.size();
+            int multiTouchCount = 0;
+            ArrayList<MotionEvent.PointerProperties> pointerProperties = new ArrayList<>();
+            ArrayList<MotionEvent.PointerCoords> pointerCoordses = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                Touch tempTouch = m_touches.get(i);
+                if (tempTouch.m_type == MotionEvent.ACTION_MOVE) {
+                    multiTouchCount++;
+                    MotionEvent.PointerProperties pp = new MotionEvent.PointerProperties();
+                    pp.id = tempTouch.m_id;
+                    pointerProperties.add(pp);
 
-                    pointerCoordses[i] = new MotionEvent.PointerCoords();
-                    pointerCoordses[i].x = m_touches.get(i).m_x * m_screenW;
-                    pointerCoordses[i].y = m_touches.get(i).m_y * m_screenH;
+                    MotionEvent.PointerCoords pc = new MotionEvent.PointerCoords();
+                    pc.x = tempTouch.m_x * m_screenW;
+                    pc.y = tempTouch.m_y * m_screenH;
+                    pointerCoordses.add(pc);
+                } else {
+                    injectSingleTouch(tempTouch);
                 }
-
-                long downTime = SystemClock.uptimeMillis();
-                long eventTime = SystemClock.uptimeMillis() + 0;
-                MotionEvent motionEvent = MotionEvent.obtain(
-                        downTime,
-                        eventTime,
-                        m_touchType,
-                        size,
-                        pointerProperties,
-                        pointerCoordses,
-                        0,
-                        1,
-                        1,
-                        0,
-                        0,
-                        0,
-                        0,
-                        0
-                );
-
-                ((Activity) m_context).dispatchTouchEvent(motionEvent);
             }
+
+            if (multiTouchCount > 0) {
+                injectMultiTouch(pointerProperties, pointerCoordses, multiTouchCount);
+            }
+        }
+
+        private void injectSingleTouch(Touch touch) {
+            long downTime = SystemClock.uptimeMillis();
+            MotionEvent.PointerProperties[] pointerProperties1 = new MotionEvent.PointerProperties[1];
+            pointerProperties1[0] = new MotionEvent.PointerProperties();
+            pointerProperties1[0].id = touch.m_id;
+            MotionEvent.PointerCoords[] pointerCoordses1 = new MotionEvent.PointerCoords[1];
+            pointerCoordses1[0] = new MotionEvent.PointerCoords();
+            pointerCoordses1[0].x = touch.m_x * m_screenW;
+            pointerCoordses1[0].y = touch.m_y * m_screenH;
+
+            MotionEvent ev = MotionEvent.obtain(
+                    downTime,
+                    downTime,
+                    touch.m_type,
+                    1,
+                    pointerProperties1,
+                    pointerCoordses1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+            );
+            Log.d(TAG, "cast 1");
+            ((Activity) m_context).dispatchTouchEvent(ev);
+            Log.d(TAG, "cast 1.2");
+        }
+
+        private void injectMultiTouch(ArrayList<MotionEvent.PointerProperties> pp, ArrayList<MotionEvent.PointerCoords> pc, int size) {
+            MotionEvent.PointerProperties[] pointerProperties = new MotionEvent.PointerProperties[size];
+            MotionEvent.PointerCoords[] pointerCoordses = new MotionEvent.PointerCoords[size];
+            for(int i=0; i<size; i++){
+                pointerProperties[i] = pp.get(i);
+                pointerCoordses[i] = pc.get(i);
+            }
+
+            long downTime = SystemClock.uptimeMillis();
+            MotionEvent motionEvent = MotionEvent.obtain(
+                    downTime,
+                    downTime,
+                    MotionEvent.ACTION_MOVE,
+                    size,
+                    pointerProperties,
+                    pointerCoordses,
+                    0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+            );
+            ((Activity) m_context).dispatchTouchEvent(motionEvent);
         }
 
         private void postInjectProccess() {
