@@ -74,6 +74,7 @@ public class Caster {
                             try {
                                 DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
                                 dos.writeUTF(mess);
+                                dos.flush();
                             } catch (Exception e) {
 
                             }

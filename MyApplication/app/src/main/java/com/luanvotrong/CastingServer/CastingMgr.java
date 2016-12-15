@@ -64,7 +64,6 @@ public class CastingMgr {
     private class TouchesInjector implements Runnable {
         private String TAG = "Lulu TouchesInjector";
         private ArrayList<Touch> m_touches = new ArrayList<>();
-        private int m_touchType = -1;
 
         @Override
         public void run() {
@@ -72,10 +71,10 @@ public class CastingMgr {
                 ArrayList<String> touches = m_receiver.getTouches();
                 synchronized (touches) {
                     while (touches.size() > 0) {
-                        String touch = touches.get(touches.size() - 1);
+                        String touch = touches.get(0);
                         if (touch != null) {
                             preproccessTouches(touch);
-                            injectTouch();
+                            injectTouch2();
                             touches.remove(0);
                         }
                     }
@@ -89,8 +88,8 @@ public class CastingMgr {
             int id = Integer.parseInt(infos[0]);
             float x = Float.parseFloat(infos[1]);
             float y = Float.parseFloat(infos[2]);
-            m_touchType = Integer.parseInt(infos[3]);
-            switch (m_touchType) {
+            int touchType = Integer.parseInt(infos[4]);
+            switch (touchType) {
                 case MotionEvent.ACTION_DOWN:
                 case MotionEvent.ACTION_POINTER_DOWN: {
                     Touch tempTouch = null;
@@ -106,7 +105,8 @@ public class CastingMgr {
                     tempTouch.m_id = id;
                     tempTouch.m_x = x;
                     tempTouch.m_y = y;
-                    tempTouch.m_type = m_touchType;
+                    tempTouch.m_type = MotionEvent.ACTION_DOWN;
+                    Log.e(TAG, "added");
                 }
                 case MotionEvent.ACTION_MOVE:
                 case MotionEvent.ACTION_UP:
@@ -117,7 +117,7 @@ public class CastingMgr {
                         if (tempTouch.m_id == id) {
                             tempTouch.m_x = x;
                             tempTouch.m_y = y;
-                            tempTouch.m_type = m_touchType;
+                            tempTouch.m_type = touchType;
                         }
                     }
                     break;
@@ -155,6 +155,14 @@ public class CastingMgr {
             }
         }
 
+        private void injectTouch2() {
+            int size = m_touches.size();
+            for (int i = 0; i < size; i++) {
+                Touch tempTouch = m_touches.get(i);
+                injectSingleTouch(tempTouch);
+            }
+        }
+
         private void injectSingleTouch(Touch touch) {
             long downTime = SystemClock.uptimeMillis();
             MotionEvent.PointerProperties[] pointerProperties1 = new MotionEvent.PointerProperties[1];
@@ -164,7 +172,6 @@ public class CastingMgr {
             pointerCoordses1[0] = new MotionEvent.PointerCoords();
             pointerCoordses1[0].x = touch.m_x * m_screenW;
             pointerCoordses1[0].y = touch.m_y * m_screenH;
-
             MotionEvent ev = MotionEvent.obtain(
                     downTime,
                     downTime,
@@ -181,9 +188,7 @@ public class CastingMgr {
                     0,
                     0
             );
-            Log.d(TAG, "cast 1");
             ((Activity) m_context).dispatchTouchEvent(ev);
-            Log.d(TAG, "cast 1.2");
         }
 
         private void injectMultiTouch(ArrayList<MotionEvent.PointerProperties> pp, ArrayList<MotionEvent.PointerCoords> pc, int size) {
