@@ -72,24 +72,40 @@ public class CastingMgr {
                         String touch = touches.get(touches.size() - 1);
                         if (touch != null) {
                             Log.d(TAG, touch);
-                            String[] infos = touch.split(":");
-                            long downTime = SystemClock.uptimeMillis();
-                            int metaState = 0;
-                            MotionEvent motionEvent = MotionEvent.obtain(
-                                    downTime,
-                                    downTime,
-                                    Integer.parseInt(infos[2]),
-                                    Float.parseFloat(infos[0]) * m_screenW,
-                                    Float.parseFloat(infos[1]) * m_screenH,
-                                    metaState
-                            );
-
-                            ((Activity) m_context).dispatchTouchEvent(motionEvent);
+                            injectSingleTouch(new Touch(touch));
                         }
                         touches.remove(touches.size() - 1);
                     }
                 }
             }
+        }
+
+        private void injectSingleTouch(Touch touch) {
+            long downTime = SystemClock.uptimeMillis();
+            MotionEvent.PointerProperties[] pointerProperties1 = new MotionEvent.PointerProperties[1];
+            pointerProperties1[0] = new MotionEvent.PointerProperties();
+            pointerProperties1[0].id = touch.m_id;
+            MotionEvent.PointerCoords[] pointerCoordses1 = new MotionEvent.PointerCoords[1];
+            pointerCoordses1[0] = new MotionEvent.PointerCoords();
+            pointerCoordses1[0].x = touch.m_x * m_screenW;
+            pointerCoordses1[0].y = touch.m_y * m_screenH;
+            MotionEvent ev = MotionEvent.obtain(
+                    downTime,
+                    downTime,
+                    touch.m_type,
+                    1,
+                    pointerProperties1,
+                    pointerCoordses1,
+                    0,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
+            );
+            ((Activity) m_context).dispatchTouchEvent(ev);
         }
     }
 
