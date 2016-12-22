@@ -9,8 +9,8 @@ import android.view.MotionEvent;
 
 import org.json.*;
 
-import com.luanvotrong.CastingServer.ConnectMgr.Caster;
-import com.luanvotrong.CastingServer.ConnectMgr.Receiver;
+import com.luanvotrong.ConnectMgr.Caster;
+import com.luanvotrong.ConnectMgr.Receiver;
 
 import java.util.ArrayList;
 

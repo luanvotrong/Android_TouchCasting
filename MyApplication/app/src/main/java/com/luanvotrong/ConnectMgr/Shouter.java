@@ -1,4 +1,4 @@
-package com.luanvotrong.CastingServer.ConnectMgr;
+package com.luanvotrong.ConnectMgr;
 
 
 import android.content.Context;
