@@ -66,28 +66,17 @@ public class MainActivity extends AppCompatActivity {
         m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         m_View.setEnabled(false);
 
-        /*
-        m_touchesPool = new TouchesPool();
-        m_castingMgr = new CastingMgr(this,m_touchesPool);
         m_btnServer = (Button) findViewById(R.id.Server);
         m_btnServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_castingMgr.initCaster();
-                m_type = CAST_TYPE.CASTER;
-                //m_nsdHelper.discoverServices();
             }
         });
-        */
         m_btnClient = (Button) findViewById(R.id.Client);
         m_btnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, Utilities.deviceName());
-                //m_castingMgr.initReceiver();
-                //setContentView(m_View);
-                //m_type = CAST_TYPE.RECEIVER;
-                //m_nsdHelper.registerService();
             }
         });
     }

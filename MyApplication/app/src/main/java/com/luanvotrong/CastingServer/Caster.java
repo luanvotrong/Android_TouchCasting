@@ -3,17 +3,11 @@ package com.luanvotrong.CastingServer;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
-import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.widget.Toast;
 
-import com.luanvotrong.CastingServer.CastingMgr;
-import com.luanvotrong.CastingServer.Touch;
-import com.luanvotrong.CastingServer.TouchesPool;
-import com.luanvotrong.ConnectMgr.Shouter;
+import com.luanvotrong.ConnectMgr.Beacon;
 
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
@@ -25,7 +19,7 @@ public class Caster {
     private int m_tcpPort = 63679;
     private String TAG = "Lulu Caster";
     private String m_serviceName = "TouchCasting";
-    private Shouter m_shouter;
+    private Beacon m_beacon;
     private CastingMgr m_castingMgr;
     private ServerSocket m_serverSocket;
     private ArrayList<Socket> m_receiverSockets;
@@ -104,10 +98,10 @@ public class Caster {
             Log.d(TAG, e.toString());
         }
 
-        if (m_shouter == null) {
-            m_shouter = new Shouter();
+        if (m_beacon == null) {
+            m_beacon = new Beacon();
         }
-        m_shouter.startRegistration(context);
+        m_beacon.startRegistration();
 
         m_serverSocketThread = new Thread(new ServerSocketWorker());
         m_serverSocketThread.start();
@@ -117,7 +111,7 @@ public class Caster {
     }
 
     public void stop() {
-        m_shouter.stopRegistration();
+        m_beacon.stopRegistration();
         m_serverSocketThread.interrupt();
         m_serverSocketThread = null;
         m_castingThread.interrupt();

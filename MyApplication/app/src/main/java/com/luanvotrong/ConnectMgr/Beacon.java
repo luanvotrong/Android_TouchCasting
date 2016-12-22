@@ -1,13 +1,12 @@
 package com.luanvotrong.ConnectMgr;
 
-
-import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 
 import com.luanvotrong.Utilities.Define;
+import com.luanvotrong.Utilities.Utilities;
 
 import java.io.IOException;
 
@@ -16,20 +15,20 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 
-public class Shouter {
+public class Beacon {
     private String TAG = "Lulu Shouter";
     private String m_serviceName = Define.SERVICE_NAME;
 
-    private Thread m_registratingThread;
+    private Thread m_shoutThread;
     private Context m_context;
     private DatagramSocket m_datagramSocket;
 
-    public void startRegistration(Context context) {
-        m_context = context;
+    public void startRegistration() {
+        m_context = Utilities.getContext();
         try {
             m_datagramSocket = new DatagramSocket();
-            m_registratingThread = new Thread(new RegistatingWorker());
-            m_registratingThread.start();
+            m_shoutThread = new Thread(new Shouter());
+            m_shoutThread.start();
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
@@ -38,14 +37,14 @@ public class Shouter {
     public void stopRegistration() {
         try {
             m_datagramSocket.close();
-            m_registratingThread.interrupt();
-            m_registratingThread = null;
+            m_shoutThread.interrupt();
+            m_shoutThread = null;
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
     }
 
-    private class RegistatingWorker implements Runnable {
+    private class Shouter implements Runnable {
         private String TAG = "Lulu RegistratingWorker";
         private long m_last = 0;
 
@@ -65,7 +64,7 @@ public class Shouter {
             return InetAddress.getByAddress(quads);
         }
 
-        public RegistatingWorker() {
+        public Shouter() {
             m_last = System.currentTimeMillis();
         }
 

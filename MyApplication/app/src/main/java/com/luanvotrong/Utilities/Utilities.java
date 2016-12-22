@@ -3,8 +3,6 @@ package com.luanvotrong.Utilities;
 import android.content.Context;
 import android.os.Build;
 
-import com.luanvotrong.ConnectMgr.ConnectMgr;
-import com.luanvotrong.touchcasting.MainActivity;
 import com.luanvotrong.touchcasting.MyApplication;
 
 /**

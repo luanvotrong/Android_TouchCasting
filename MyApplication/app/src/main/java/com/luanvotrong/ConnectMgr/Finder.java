@@ -2,17 +2,17 @@ package com.luanvotrong.ConnectMgr;
 
 import android.util.Log;
 
+import com.luanvotrong.Utilities.Define;
+
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 public class Finder {
-    private String TAG = "Lulu Listener";
-    private int m_udpPort = 63678;
-    private int m_tcpPort = 63679;
+    private String TAG = "Lulu Finder";
     private String m_serviceName = "TouchCasting";
     private InetAddress m_shouterAddress;
-    private Thread m_listeningThread;
+    private Thread m_listenThread;
 
     public enum STATE {
         LISTENING,
@@ -33,20 +33,20 @@ public class Finder {
     }
 
     public void startListening() {
-        m_listeningThread = new Thread(new ListenWorker());
-        m_listeningThread.start();
+        m_listenThread = new Thread(new Listener());
+        m_listenThread.start();
 
         setState(STATE.LISTENING);
     }
 
     public void stopListening() {
-        if(m_listeningThread != null) {
-            m_listeningThread.interrupt();
-            m_listeningThread = null;
+        if(m_listenThread != null) {
+            m_listenThread.interrupt();
+            m_listenThread = null;
         }
     }
 
-    private class ListenWorker implements Runnable {
+    private class Listener implements Runnable {
         private String TAG = "Lulu ListenWorker";
 
         @Override
@@ -54,7 +54,7 @@ public class Finder {
             byte[] message = new byte[1500];
             try {
                 while(!Thread.currentThread().isInterrupted()) {
-                    DatagramSocket s = new DatagramSocket(m_udpPort);
+                    DatagramSocket s = new DatagramSocket(Define.PORT_SHOUTING_UDP);
                     s.setBroadcast(true);
                     DatagramPacket p = new DatagramPacket(message, message.length);
                     s.receive(p);
