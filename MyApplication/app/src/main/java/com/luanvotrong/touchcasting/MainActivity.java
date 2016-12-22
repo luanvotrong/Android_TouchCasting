@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         m_View.setEnabled(false);
 
+        /*
         m_nsdHelper = new NsdHelper();
         m_nsdHelper.init(this);
 
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 //m_nsdHelper.registerService();
             }
         });
+        */
     }
 
     @Override
