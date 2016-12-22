@@ -7,11 +7,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import org.json.*;
-
-import com.luanvotrong.ConnectMgr.Caster;
-import com.luanvotrong.ConnectMgr.Receiver;
-
 import java.util.ArrayList;
 
 

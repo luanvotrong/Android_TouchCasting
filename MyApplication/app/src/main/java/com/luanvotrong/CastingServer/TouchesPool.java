@@ -1,7 +1,6 @@
 package com.luanvotrong.CastingServer;
 
 import android.util.Log;
-import android.view.MotionEvent;
 
 import java.util.ArrayList;
 

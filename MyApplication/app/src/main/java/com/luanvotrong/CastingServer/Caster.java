@@ -1,4 +1,4 @@
-package com.luanvotrong.ConnectMgr;
+package com.luanvotrong.CastingServer;
 
 
 import android.app.Activity;
@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.luanvotrong.CastingServer.CastingMgr;
 import com.luanvotrong.CastingServer.Touch;
 import com.luanvotrong.CastingServer.TouchesPool;
+import com.luanvotrong.ConnectMgr.Shouter;
 
 import java.io.DataOutputStream;
 import java.net.ServerSocket;

@@ -1,10 +1,11 @@
-package com.luanvotrong.ConnectMgr;
+package com.luanvotrong.CastingServer;
 
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
 import com.luanvotrong.CastingServer.CastingMgr;
+import com.luanvotrong.ConnectMgr.Listener;
 
 import java.io.DataInputStream;
 import java.net.Socket;
