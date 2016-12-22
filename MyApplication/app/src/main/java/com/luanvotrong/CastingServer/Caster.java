@@ -101,7 +101,6 @@ public class Caster {
         if (m_beacon == null) {
             m_beacon = new Beacon();
         }
-        m_beacon.startRegistration();
 
         m_serverSocketThread = new Thread(new ServerSocketWorker());
         m_serverSocketThread.start();
@@ -111,7 +110,6 @@ public class Caster {
     }
 
     public void stop() {
-        m_beacon.stopRegistration();
         m_serverSocketThread.interrupt();
         m_serverSocketThread = null;
         m_castingThread.interrupt();

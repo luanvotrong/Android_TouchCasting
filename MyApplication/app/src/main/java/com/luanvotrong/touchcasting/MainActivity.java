@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 
 import com.luanvotrong.CastingServer.CastingMgr;
 import com.luanvotrong.CastingServer.TouchesPool;
+import com.luanvotrong.ConnectMgr.ConnectMgr;
 import com.luanvotrong.Utilities.Utilities;
 import com.luanvotrong.touchcasting.R;
 
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private Button m_btnServer;
     private Button m_btnClient;
 
+    private ConnectMgr connectMgr;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,17 +61,20 @@ public class MainActivity extends AppCompatActivity {
         m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         m_View.setEnabled(false);
 
+        connectMgr = new ConnectMgr();
+
         m_btnServer = (Button) findViewById(R.id.Server);
         m_btnServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                connectMgr.startBeacon();
             }
         });
         m_btnClient = (Button) findViewById(R.id.Client);
         m_btnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, Utilities.deviceName());
+                connectMgr.startFinder();
             }
         });
     }

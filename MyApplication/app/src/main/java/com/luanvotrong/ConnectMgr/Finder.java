@@ -11,26 +11,11 @@ import java.net.InetAddress;
 public class Finder {
     private String TAG = "Lulu Finder";
     private String m_serviceName = "TouchCasting";
-    private InetAddress m_shouterAddress;
     private Thread m_listenThread;
+    private FinderCallback m_finderCallback;
 
-    public enum STATE {
-        LISTENING,
-        LISTENED
-    }
+    public Finder() {
 
-    private STATE m_state;
-
-    public void setState(STATE state) {
-        m_state = state;
-    }
-
-    public STATE getState() {
-        return m_state;
-    }
-
-    public InetAddress getShouterAddress() {
-        return m_shouterAddress;
     }
 
     public void start() {
@@ -40,7 +25,6 @@ public class Finder {
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
-        setState(STATE.LISTENING);
     }
 
     public void stop() {
@@ -65,9 +49,8 @@ public class Finder {
                     DatagramPacket p = new DatagramPacket(message, message.length);
                     s.receive(p);
                     String mess = new String(message, 0, p.getLength());
-                    if (mess.equalsIgnoreCase(m_serviceName)) {
-                        m_shouterAddress = p.getAddress();
-                        setState(STATE.LISTENED);
+                    if (mess.contains(m_serviceName)) {
+                        m_finderCallback.onFoundBeacon(mess, p.getAddress());
                     }
                 }
             } catch (Exception e) {

@@ -2,8 +2,11 @@ package com.luanvotrong.ConnectMgr;
 
 import android.util.Log;
 
-public class ConnectMgr {
+import java.net.InetAddress;
+
+public class ConnectMgr implements FinderCallback {
     private String TAG = "Lulu ConnectMgr";
+
     private enum TYPE {
         NONE,
         SHOUTER,
@@ -52,5 +55,10 @@ public class ConnectMgr {
     public void stopFinder() {
         finder.stop();
         type = TYPE.NONE;
+    }
+
+    @Override
+    public void onFoundBeacon(String beaconName, InetAddress inetAddress) {
+        Log.d(TAG, "Found " + beaconName + " " + inetAddress.toString());
     }
 }

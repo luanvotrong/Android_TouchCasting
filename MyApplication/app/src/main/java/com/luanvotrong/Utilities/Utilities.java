@@ -11,7 +11,7 @@ import com.luanvotrong.touchcasting.MyApplication;
 
 public class Utilities {
 
-    public static String deviceName() {
+    public static String getDeviceName() {
         String manufacturer = Build.MANUFACTURER.toLowerCase();
         String model = Build.MODEL.toLowerCase();
 

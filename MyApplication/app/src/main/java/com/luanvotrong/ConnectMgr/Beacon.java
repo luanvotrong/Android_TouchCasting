@@ -17,13 +17,15 @@ import java.net.InetAddress;
 
 public class Beacon {
     private String TAG = "Lulu Shouter";
-    private String m_serviceName = Define.SERVICE_NAME;
+    private String m_serviceName;
 
     private Thread m_shoutThread;
     private Context m_context;
     private DatagramSocket m_datagramSocket;
 
     public void start() {
+        m_serviceName = Define.SERVICE_NAME + " " + Utilities.getDeviceName();
+
         m_context = Utilities.getContext();
         try {
             m_datagramSocket = new DatagramSocket();

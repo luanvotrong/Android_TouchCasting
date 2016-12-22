@@ -34,9 +34,11 @@ public class Receiver {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 if (System.currentTimeMillis() - m_last > 1000) {
+                    /*
                     if (m_finder.getState() == Finder.STATE.LISTENED) {
                         onFoundCaster();
                     }
+                    */
                 }
             }
         }
@@ -67,6 +69,7 @@ public class Receiver {
     }
 
     public void onFoundCaster() {
+        /*
         m_finder.stopListening();
         m_connectThread.interrupt();
         try {
@@ -78,6 +81,7 @@ public class Receiver {
 
         m_receiverThread = new Thread(new ReceiverWorker());
         m_receiverThread.start();
+        */
     }
 
     public void start(CastingMgr castingMgr) {
@@ -87,7 +91,7 @@ public class Receiver {
         if (m_finder == null) {
             m_finder = new Finder();
         }
-        m_finder.startListening();
+        //m_finder.startListening();
 
         m_connectThread = new Thread(new ConnectWorker());
         m_connectThread.start();
