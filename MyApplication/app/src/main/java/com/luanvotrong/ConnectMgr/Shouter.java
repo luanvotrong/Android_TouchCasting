@@ -6,6 +6,8 @@ import android.util.Log;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
 
+import com.luanvotrong.Utilities.Define;
+
 import java.io.IOException;
 
 import java.net.DatagramPacket;
@@ -15,24 +17,30 @@ import java.net.InetAddress;
 
 public class Shouter {
     private String TAG = "Lulu Shouter";
-
-    private int m_udpPort = 63678;
-    private int m_tcpPort = 63679;
-    private String m_serviceName = "TouchCasting";
+    private String m_serviceName = Define.SERVICE_NAME;
 
     private Thread m_registratingThread;
     private Context m_context;
+    private DatagramSocket m_datagramSocket;
 
     public void startRegistration(Context context) {
         m_context = context;
-        m_registratingThread = new Thread(new RegistatingWorker());
-        m_registratingThread.start();
+        try {
+            m_datagramSocket = new DatagramSocket();
+            m_registratingThread = new Thread(new RegistatingWorker());
+            m_registratingThread.start();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
     }
 
     public void stopRegistration() {
-        if (m_registratingThread != null) {
+        try {
+            m_datagramSocket.close();
             m_registratingThread.interrupt();
             m_registratingThread = null;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -64,18 +72,16 @@ public class Shouter {
         public void run() {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
-                    DatagramSocket s = new DatagramSocket();
                     InetAddress local = getBroadcastAddress();
                     while (!Thread.currentThread().isInterrupted()) {
-                        if (System.currentTimeMillis() - m_last > 1000) {
+                        if (System.currentTimeMillis() - m_last > Define.INTERVAL_SHOUTING) {
                             int msg_length = m_serviceName.length();
                             byte[] message = m_serviceName.getBytes();
-                            DatagramPacket p = new DatagramPacket(message, msg_length, local, m_udpPort);
-                            s.send(p);
+                            DatagramPacket p = new DatagramPacket(message, msg_length, local, Define.PORT_SHOUTING_UDP);
+                            m_datagramSocket.send(p);
                             m_last = System.currentTimeMillis();
                         }
                     }
-                    s.close();
                 }
             } catch (Exception e) {
                 Log.e(TAG, e.toString());

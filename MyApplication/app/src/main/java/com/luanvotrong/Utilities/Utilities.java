@@ -19,8 +19,4 @@ public class Utilities {
             return manufacturer + " " + model;
         }
     }
-
-    public static void sendUdp() {};
-    public static void receiveUdp() {};
-
 }

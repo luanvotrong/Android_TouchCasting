@@ -28,6 +28,7 @@ public class ConnectMgr {
             case NONE:
                 break;
             case SHOUTER:
+                stopShouter();
                 break;
             case FINDER:
                 break;
@@ -36,16 +37,25 @@ public class ConnectMgr {
         m_type = TYPE.SHOUTER;
     }
 
-    public void initListener() {
+    public void stopShouter() {
+        m_type = TYPE.NONE;
+    }
+
+    public void startListener() {
         switch (m_type) {
             case NONE:
                 break;
             case SHOUTER:
+                stopListener();
                 break;
             case FINDER:
                 break;
         }
 
         m_type = TYPE.FINDER;
+    }
+
+    public void stopListener() {
+        m_type = TYPE.NONE;
     }
 }

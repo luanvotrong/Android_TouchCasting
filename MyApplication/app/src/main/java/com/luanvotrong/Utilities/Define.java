@@ -5,7 +5,9 @@ package com.luanvotrong.Utilities;
  */
 
 public class Define {
-    public static int PORT_FINDING_UDP  = 63677;
+    public static int PORT_SHOUTING_UDP  = 63677;
     public static int PORT_UDP = 63678;
-    public static int PORT_TCP = 63679;
+
+    public static String SERVICE_NAME = "Touch casting";
+    public static int INTERVAL_SHOUTING = 1000;
 }
