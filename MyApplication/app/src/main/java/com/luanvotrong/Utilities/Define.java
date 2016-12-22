@@ -1,4 +1,4 @@
-package com.luanvotrong;
+package com.luanvotrong.Utilities;
 
 /**
  * Created by luan.votrong on 12/22/2016.

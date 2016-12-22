@@ -1,4 +1,4 @@
-package com.luanvotrong.touchcasting;
+package com.luanvotrong.Scenes;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,7 +9,6 @@ import android.view.MotionEvent;
 import android.view.SurfaceView;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.

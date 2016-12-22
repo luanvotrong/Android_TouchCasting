@@ -1,15 +1,13 @@
-package com.luanvotrong.touchcasting;
+package com.luanvotrong.Scenes;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.graphics.Paint;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,6 +16,7 @@ import android.widget.LinearLayout;
 
 import com.luanvotrong.CastingServer.CastingMgr;
 import com.luanvotrong.CastingServer.TouchesPool;
+import com.luanvotrong.touchcasting.R;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
