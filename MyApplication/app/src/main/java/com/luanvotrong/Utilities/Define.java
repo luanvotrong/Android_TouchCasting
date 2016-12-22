@@ -5,6 +5,7 @@ package com.luanvotrong.Utilities;
  */
 
 public class Define {
+    public static int PORT_FINDING_UDP  = 63677;
     public static int PORT_UDP = 63678;
     public static int PORT_TCP = 63679;
 }

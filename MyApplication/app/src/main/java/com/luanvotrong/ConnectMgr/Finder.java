@@ -6,7 +6,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-public class Listener {
+public class Finder {
     private String TAG = "Lulu Listener";
     private int m_udpPort = 63678;
     private int m_tcpPort = 63679;

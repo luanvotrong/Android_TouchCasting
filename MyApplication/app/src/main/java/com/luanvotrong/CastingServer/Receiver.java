@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.luanvotrong.CastingServer.CastingMgr;
-import com.luanvotrong.ConnectMgr.Listener;
+import com.luanvotrong.ConnectMgr.Finder;
 
 import java.io.DataInputStream;
 import java.net.Socket;
@@ -16,7 +16,7 @@ public class Receiver {
     private int m_tcpPort = 63679;
     private String TAG = "Lulu Receiver";
     private String m_serviceName = "TouchCasting";
-    private Listener m_listener;
+    private Finder m_finder;
     private CastingMgr m_castingMgr;
     private Thread m_connectThread;
     private Thread m_receiverThread;
@@ -34,7 +34,7 @@ public class Receiver {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 if (System.currentTimeMillis() - m_last > 1000) {
-                    if (m_listener.getState() == Listener.STATE.LISTENED) {
+                    if (m_finder.getState() == Finder.STATE.LISTENED) {
                         onFoundCaster();
                     }
                 }
@@ -67,10 +67,10 @@ public class Receiver {
     }
 
     public void onFoundCaster() {
-        m_listener.stopListening();
+        m_finder.stopListening();
         m_connectThread.interrupt();
         try {
-            m_socket = new Socket(m_listener.getShouterAddress(), m_tcpPort);
+            m_socket = new Socket(m_finder.getShouterAddress(), m_tcpPort);
             m_castingMgr.resetDimension();
         } catch (Exception e) {
             Log.d(TAG, e.toString());
@@ -84,10 +84,10 @@ public class Receiver {
         m_castingMgr = castingMgr;
         m_touches = new ArrayList<String>();
 
-        if (m_listener == null) {
-            m_listener = new Listener();
+        if (m_finder == null) {
+            m_finder = new Finder();
         }
-        m_listener.startListening();
+        m_finder.startListening();
 
         m_connectThread = new Thread(new ConnectWorker());
         m_connectThread.start();
