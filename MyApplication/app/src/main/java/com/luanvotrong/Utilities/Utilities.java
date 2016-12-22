@@ -9,14 +9,14 @@ import android.os.Build;
 public class Utilities {
 
     public static String deviceName() {
-        String manufacturer = Build.MANUFACTURER;
-        String model = Build.MODEL;
+        String manufacturer = Build.MANUFACTURER.toLowerCase();
+        String model = Build.MODEL.toLowerCase();
 
         if(model.startsWith(manufacturer)) {
             return model;
         }
         else {
-            return manufacturer + model;
+            return manufacturer + " " + model;
         }
     }
 

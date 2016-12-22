@@ -1,4 +1,4 @@
-package com.luanvotrong.Scenes;
+package com.luanvotrong.touchcasting;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -16,6 +17,7 @@ import android.widget.LinearLayout;
 
 import com.luanvotrong.CastingServer.CastingMgr;
 import com.luanvotrong.CastingServer.TouchesPool;
+import com.luanvotrong.Utilities.Utilities;
 import com.luanvotrong.touchcasting.R;
 
 /**
@@ -76,17 +78,18 @@ public class MainActivity extends AppCompatActivity {
                 //m_nsdHelper.discoverServices();
             }
         });
+        */
         m_btnClient = (Button) findViewById(R.id.Client);
         m_btnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                m_castingMgr.initReceiver();
-                setContentView(m_View);
-                m_type = CAST_TYPE.RECEIVER;
+                Log.e(TAG, Utilities.deviceName());
+                //m_castingMgr.initReceiver();
+                //setContentView(m_View);
+                //m_type = CAST_TYPE.RECEIVER;
                 //m_nsdHelper.registerService();
             }
         });
-        */
     }
 
     @Override
