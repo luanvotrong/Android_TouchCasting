@@ -12,10 +12,10 @@ public class Finder {
     private String TAG = "Lulu Finder";
     private String m_serviceName = "TouchCasting";
     private Thread m_listenThread;
-    private FinderCallback m_finderCallback;
+    private FinderCallback finderCallback;
 
-    public Finder() {
-
+    public Finder(FinderCallback finderCallback) {
+        this.finderCallback = finderCallback;
     }
 
     public void start() {
@@ -50,7 +50,7 @@ public class Finder {
                     s.receive(p);
                     String mess = new String(message, 0, p.getLength());
                     if (mess.contains(m_serviceName)) {
-                        m_finderCallback.onFoundBeacon(mess, p.getAddress());
+                        finderCallback.onFoundBeacon(mess, p.getAddress());
                     }
                 }
             } catch (Exception e) {
