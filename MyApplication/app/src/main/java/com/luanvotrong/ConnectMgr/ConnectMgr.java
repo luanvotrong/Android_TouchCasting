@@ -2,7 +2,10 @@ package com.luanvotrong.ConnectMgr;
 
 import android.util.Log;
 
+import com.luanvotrong.Utilities.HostInfo;
+
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -10,7 +13,7 @@ import java.util.Set;
 
 public class ConnectMgr implements FinderCallback {
     private String TAG = "Lulu ConnectMgr";
-    private Map<InetAddress, String> listBeacon;
+    private ArrayList<HostInfo> listBeacon;
 
     private enum TYPE {
         NONE,
@@ -23,7 +26,7 @@ public class ConnectMgr implements FinderCallback {
     private Finder finder;
 
     public ConnectMgr() {
-        listBeacon = new HashMap<>();
+        listBeacon = new ArrayList<>();
         beacon = new Beacon();
         finder = new Finder(this);
     }
@@ -45,6 +48,7 @@ public class ConnectMgr implements FinderCallback {
     }
 
     public void stopBeacon() {
+        beacon.stop();
         type = TYPE.NONE;
     }
 
@@ -71,13 +75,14 @@ public class ConnectMgr implements FinderCallback {
 
     @Override
     public void onFoundBeacon(String beaconName, InetAddress inetAddress) {
-        listBeacon.put(inetAddress, beaconName);
         Log.d(TAG, "Found new ---------------------------------------------------");
-        Set set = listBeacon.entrySet();
-        Iterator it = set.iterator();
-        while(it.hasNext()) {
-            Map.Entry entry = (Map.Entry)it.next();
-            Log.d(TAG, "key: " + entry.getKey() + " value: " + entry.getValue());
+    }
+
+
+    private class Updater implements Runnable {
+        @Override
+        public void run() {
+            //Todo: implement check dead host
         }
     }
 }
