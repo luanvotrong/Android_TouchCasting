@@ -31,16 +31,12 @@ public class MainActivity extends AppCompatActivity {
         CASTER,
         RECEIVER
     }
+
     private CAST_TYPE m_type = CAST_TYPE.NONE;
-
     private String TAG = "Lulu MainActivity";
-
     private DrawingView m_View;
     private Button m_btnServer;
     private Button m_btnClient;
-
-    private TouchesPool m_touchesPool;
-    private CastingMgr m_castingMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +46,11 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
-        {
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET))
-            {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET)) {
 
-            }
-            else
-            {
-                ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.INTERNET }, 1);
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
             }
         }
 
@@ -92,8 +84,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        m_castingMgr.destroy();
     }
 
     @Override
@@ -103,19 +93,16 @@ public class MainActivity extends AppCompatActivity {
 
         // get pointer ID
         //hdz add void to crash from google log
-        if(pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
+        if (pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
             return false;
 
-        for(int size = motionEvent.getPointerCount(), i = 0; i<size; i++) {
+        for (int size = motionEvent.getPointerCount(), i = 0; i < size; i++) {
             int pointerId = motionEvent.getPointerId(i);
             float x = motionEvent.getX(i);
             float y = motionEvent.getY(i);
 
             switch (m_type) {
                 case CASTER:
-                    synchronized (m_touchesPool) {
-                        m_touchesPool.AddTouch(pointerId, x, y, motionEvent.getActionMasked());
-                    }
                     break;
                 case RECEIVER:
                     m_View.setTouch(pointerId, x, y, motionEvent.getActionMasked());

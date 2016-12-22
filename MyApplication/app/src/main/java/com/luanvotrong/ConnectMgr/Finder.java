@@ -18,6 +18,7 @@ public class Finder {
         LISTENING,
         LISTENED
     }
+
     private STATE m_state;
 
     public void setState(STATE state) {
@@ -32,17 +33,22 @@ public class Finder {
         return m_shouterAddress;
     }
 
-    public void startListening() {
-        m_listenThread = new Thread(new Listener());
-        m_listenThread.start();
-
+    public void start() {
+        try {
+            m_listenThread = new Thread(new Listener());
+            m_listenThread.start();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
         setState(STATE.LISTENING);
     }
 
-    public void stopListening() {
-        if(m_listenThread != null) {
+    public void stop() {
+        try {
             m_listenThread.interrupt();
             m_listenThread = null;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
         }
     }
 
@@ -53,19 +59,18 @@ public class Finder {
         public void run() {
             byte[] message = new byte[1500];
             try {
-                while(!Thread.currentThread().isInterrupted()) {
+                while (!Thread.currentThread().isInterrupted()) {
                     DatagramSocket s = new DatagramSocket(Define.PORT_SHOUTING_UDP);
                     s.setBroadcast(true);
                     DatagramPacket p = new DatagramPacket(message, message.length);
                     s.receive(p);
                     String mess = new String(message, 0, p.getLength());
-                    if(mess.equalsIgnoreCase(m_serviceName)) {
+                    if (mess.equalsIgnoreCase(m_serviceName)) {
                         m_shouterAddress = p.getAddress();
                         setState(STATE.LISTENED);
                     }
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 Log.e(TAG, e.toString());
             }
         }

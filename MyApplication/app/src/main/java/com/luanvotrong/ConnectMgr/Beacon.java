@@ -23,7 +23,7 @@ public class Beacon {
     private Context m_context;
     private DatagramSocket m_datagramSocket;
 
-    public void startRegistration() {
+    public void start() {
         m_context = Utilities.getContext();
         try {
             m_datagramSocket = new DatagramSocket();
@@ -34,7 +34,7 @@ public class Beacon {
         }
     }
 
-    public void stopRegistration() {
+    public void stop() {
         try {
             m_datagramSocket.close();
             m_shoutThread.interrupt();
