@@ -1,6 +1,11 @@
 package com.luanvotrong.Utilities;
 
+import android.content.Context;
 import android.os.Build;
+
+import com.luanvotrong.ConnectMgr.ConnectMgr;
+import com.luanvotrong.touchcasting.MainActivity;
+import com.luanvotrong.touchcasting.MyApplication;
 
 /**
  * Created by luan.votrong on 12/22/2016.
@@ -18,5 +23,9 @@ public class Utilities {
         else {
             return manufacturer + " " + model;
         }
+    }
+
+    public static Context getContext() {
+        return MyApplication.getContext();
     }
 }
