@@ -1,6 +1,4 @@
-package com.luanvotrong.CastingServer;
-
-import android.util.Log;
+package com.luanvotrong.Utilities;
 
 import java.util.ArrayList;
 

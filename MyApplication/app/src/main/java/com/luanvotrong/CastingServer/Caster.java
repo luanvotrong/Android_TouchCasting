@@ -8,6 +8,8 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.luanvotrong.ConnectMgr.Beacon;
+import com.luanvotrong.Utilities.Touch;
+import com.luanvotrong.Utilities.TouchesPool;
 
 import java.io.DataOutputStream;
 import java.net.ServerSocket;

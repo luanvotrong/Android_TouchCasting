@@ -1,4 +1,4 @@
-package com.luanvotrong.CastingServer;
+package com.luanvotrong.Utilities;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.

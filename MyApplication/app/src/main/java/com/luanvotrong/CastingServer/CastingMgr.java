@@ -7,6 +7,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.luanvotrong.Utilities.Touch;
+import com.luanvotrong.Utilities.TouchesPool;
+
 import java.util.ArrayList;
 
 
