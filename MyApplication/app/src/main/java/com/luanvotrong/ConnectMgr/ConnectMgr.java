@@ -6,10 +6,6 @@ import com.luanvotrong.Utilities.HostInfo;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
 
 public class ConnectMgr implements FinderCallback {
     private String TAG = "Lulu ConnectMgr";
@@ -34,11 +30,11 @@ public class ConnectMgr implements FinderCallback {
     public void startBeacon() {
         switch (type) {
             case NONE:
-                finder.start();
+                beacon.start();
                 break;
             case SHOUTER:
-                stopBeacon();
-                finder.start();
+                stopFinder();
+                beacon.start();
                 break;
             case FINDER:
                 break;
@@ -55,11 +51,11 @@ public class ConnectMgr implements FinderCallback {
     public void startFinder() {
         switch (type) {
             case NONE:
-                beacon.start();
+                finder.start();
                 break;
             case SHOUTER:
-                stopFinder();
-                beacon.start();
+                stopBeacon();
+                finder.start();
                 break;
             case FINDER:
                 break;
@@ -75,7 +71,26 @@ public class ConnectMgr implements FinderCallback {
 
     @Override
     public void onFoundBeacon(String beaconName, InetAddress inetAddress) {
+        HostInfo info = null;
+        for(int i=0, size = listBeacon.size(); i<size; i++) {
+            if(listBeacon.get(i).getInetAddress().getHostAddress().equals(inetAddress.getHostAddress())) {
+                info = listBeacon.get(i);
+            }
+        }
+
+        if(info == null) {
+            info = new HostInfo(inetAddress, beaconName);
+            listBeacon.add(info);
+        }
+        else {
+            info.setName(beaconName);
+        }
+
         Log.d(TAG, "Found new ---------------------------------------------------");
+        for(int i=0, size = listBeacon.size(); i<size; i++) {
+            info = listBeacon.get(i);
+            Log.d(TAG, "Name: " + info.getName() + " IP: " + info.getInetAddress().getHostAddress());
+        }
     }
 
 

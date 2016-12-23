@@ -89,7 +89,7 @@ public class Receiver {
         m_touches = new ArrayList<String>();
 
         if (m_finder == null) {
-            m_finder = new Finder();
+            //m_finder = new Finder();
         }
         //m_finder.startListening();
 

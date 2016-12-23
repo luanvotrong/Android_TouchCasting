@@ -6,13 +6,13 @@ import com.luanvotrong.Utilities.Define;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 
 public class Finder {
     private String TAG = "Lulu Finder";
-    private String m_serviceName = "TouchCasting";
+    private String m_serviceName = Define.SERVICE_NAME;
     private Thread m_listenThread;
     private FinderCallback finderCallback;
+    private DatagramSocket datagramSocket;
 
     public Finder(FinderCallback finderCallback) {
         this.finderCallback = finderCallback;
@@ -20,6 +20,7 @@ public class Finder {
 
     public void start() {
         try {
+            datagramSocket = new DatagramSocket(Define.PORT_SHOUTING_UDP);
             m_listenThread = new Thread(new Listener());
             m_listenThread.start();
         } catch (Exception e) {
@@ -29,6 +30,7 @@ public class Finder {
 
     public void stop() {
         try {
+            datagramSocket.close();
             m_listenThread.interrupt();
             m_listenThread = null;
         } catch (Exception e) {
@@ -44,11 +46,11 @@ public class Finder {
             byte[] message = new byte[1500];
             try {
                 while (!Thread.currentThread().isInterrupted()) {
-                    DatagramSocket s = new DatagramSocket(Define.PORT_SHOUTING_UDP);
-                    s.setBroadcast(true);
+                    datagramSocket.setBroadcast(true);
                     DatagramPacket p = new DatagramPacket(message, message.length);
-                    s.receive(p);
+                    datagramSocket.receive(p);
                     String mess = new String(message, 0, p.getLength());
+                    Log.d(TAG, "received mess: " + mess);
                     if (mess.contains(m_serviceName)) {
                         finderCallback.onFoundBeacon(mess, p.getAddress());
                     }

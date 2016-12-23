@@ -28,7 +28,7 @@ public class Beacon {
 
         m_context = Utilities.getContext();
         try {
-            m_datagramSocket = new DatagramSocket();
+            m_datagramSocket = new DatagramSocket(Define.PORT_SHOUTING_UDP);
             m_shoutThread = new Thread(new Shouter());
             m_shoutThread.start();
         } catch (Exception e) {
@@ -47,7 +47,7 @@ public class Beacon {
     }
 
     private class Shouter implements Runnable {
-        private String TAG = "Lulu RegistratingWorker";
+        private String TAG = "Lulu Shouter";
         private long m_last = 0;
 
         private InetAddress getBroadcastAddress() throws IOException {
@@ -81,6 +81,7 @@ public class Beacon {
                             byte[] message = m_serviceName.getBytes();
                             DatagramPacket p = new DatagramPacket(message, msg_length, local, Define.PORT_SHOUTING_UDP);
                             m_datagramSocket.send(p);
+                            Log.d(TAG, "Sent: " + m_serviceName);
                             m_last = System.currentTimeMillis();
                         }
                     }

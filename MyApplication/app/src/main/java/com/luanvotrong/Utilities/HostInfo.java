@@ -9,7 +9,7 @@ import java.net.InetAddress;
 public class HostInfo {
     public InetAddress inetAddress;
     public String name;
-    public float countdown;
+    public long countdown;
 
     public HostInfo(InetAddress inetAddress, String name) {
         this.inetAddress = inetAddress;
@@ -22,6 +22,22 @@ public class HostInfo {
     }
 
     public void resetCountdown() {
-        countdown = 10;
+        countdown = System.currentTimeMillis();
+    }
+
+    public void setInetAddress(InetAddress inetAddress) {
+        this.inetAddress = inetAddress;
+    }
+
+    public InetAddress getInetAddress() {
+        return this.inetAddress;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
     }
 }
