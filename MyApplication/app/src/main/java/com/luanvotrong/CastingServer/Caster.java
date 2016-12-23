@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.Utilities.TouchesPool;
+import com.luanvotrong.touchcasting.MyApplication;
 
 import java.io.DataOutputStream;
 import java.net.Socket;
@@ -25,6 +26,8 @@ public class Caster {
         touchesPool.Clear();
         this.socket = socket;
 
+        mScreenW = MyApplication.getCastMgr().getScreenW();
+        mScreenH = MyApplication.getCastMgr().getScreenH();
         castingWorker = new Thread( new CastingWorker() );
     }
 

@@ -57,6 +57,14 @@ public class CastMgr {
         return this.mainActivity;
     }
 
+    public float getScreenW() {
+        return mScreenW;
+    }
+
+    public float getScreenH() {
+        return mScreenH;
+    }
+
     public void resetDimension() {
         DisplayMetrics display = context.getResources().getDisplayMetrics();
         mScreenW = display.widthPixels;

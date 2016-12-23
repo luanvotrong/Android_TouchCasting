@@ -19,8 +19,8 @@ public class Receiver {
     private String TAG = "Lulu Receiver";
     private String m_serviceName = "TouchCasting";
     private CastMgr castMgr;
-    private Thread m_connectThread;
-    private Thread m_receiverThread;
+    private Thread receiverThread;
+    private Thread touchInjectThread;
     private Socket m_socket;
     private ArrayList<String> mTouches;
     private float mScreenW;
@@ -35,8 +35,32 @@ public class Receiver {
         castMgr = MyApplication.getCastMgr();
         activity = castMgr.getMainActivity();
         mTouches = new ArrayList<String>();
+        mScreenW = MyApplication.getCastMgr().getScreenW();
+        mScreenH = MyApplication.getCastMgr().getScreenH();
+
+        receiverThread = new Thread(new ReceiverWorker());
+        receiverThread.start();
+
+        touchInjectThread = new Thread(new TouchesInjector());
+        touchInjectThread.start();
     }
 
+    public void stop() {
+        try {
+            receiverThread.interrupt();
+            receiverThread = null;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+            receiverThread = null;
+        }
+        try {
+            touchInjectThread.interrupt();
+            touchInjectThread = null;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+            touchInjectThread = null;
+        }
+    }
 
     private class ReceiverWorker implements Runnable {
         @Override
@@ -50,12 +74,13 @@ public class Receiver {
                         mTouches.add(mess);
                         Log.d(TAG, mess);
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     Log.d(TAG, e.toString());
                 }
             }
         }
     }
+
     private class TouchesInjector implements Runnable {
         private String TAG = "Lulu TouchesInjector";
 
