@@ -64,6 +64,10 @@ public class ConnectMgr implements FinderCallback {
         type = TYPE.FINDER;
     }
 
+    public ArrayList<HostInfo> getListBeacon() {
+        return this.listBeacon;
+    }
+
     public void stopFinder() {
         finder.stop();
         type = TYPE.NONE;
@@ -72,22 +76,21 @@ public class ConnectMgr implements FinderCallback {
     @Override
     public void onFoundBeacon(String beaconName, InetAddress inetAddress) {
         HostInfo info = null;
-        for(int i=0, size = listBeacon.size(); i<size; i++) {
-            if(listBeacon.get(i).getInetAddress().getHostAddress().equals(inetAddress.getHostAddress())) {
+        for (int i = 0, size = listBeacon.size(); i < size; ++i) {
+            if (listBeacon.get(i).getInetAddress().getHostAddress().equals(inetAddress.getHostAddress())) {
                 info = listBeacon.get(i);
             }
         }
 
-        if(info == null) {
+        if (info == null) {
             info = new HostInfo(inetAddress, beaconName);
             listBeacon.add(info);
-        }
-        else {
+        } else {
             info.setName(beaconName);
         }
 
         Log.d(TAG, "Found new ---------------------------------------------------");
-        for(int i=0, size = listBeacon.size(); i<size; i++) {
+        for (int i = 0, size = listBeacon.size(); i < size; ++i) {
             info = listBeacon.get(i);
             Log.d(TAG, "Name: " + info.getName() + " IP: " + info.getInetAddress().getHostAddress());
         }
