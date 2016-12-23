@@ -15,8 +15,8 @@ import com.luanvotrong.touchcasting.MyApplication;
 import java.util.ArrayList;
 
 
-public class CastingMgr {
-    private String TAG = "Lulu CastingMgr";
+public class CastMgr {
+    private String TAG = "Lulu CastMgr";
 
     private Context m_context;
     private TouchesPool m_touchesPool;
@@ -36,7 +36,7 @@ public class CastingMgr {
 
     private CAST_TYPE m_type;
 
-    public CastingMgr() {
+    public CastMgr() {
         m_context = MyApplication.getContext();
         m_touchesPool = new TouchesPool();
 

@@ -14,7 +14,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
-import com.luanvotrong.CastingServer.CastingMgr;
+import com.luanvotrong.CastingServer.CastMgr;
 import com.luanvotrong.ConnectMgr.ConnectMgr;
 
 /**
@@ -24,12 +24,12 @@ import com.luanvotrong.ConnectMgr.ConnectMgr;
 
 public class MainActivity extends AppCompatActivity {
     private String TAG = "Lulu MainActivity";
-    private DrawingView m_View;
-    private Button m_btnServer;
-    private Button m_btnClient;
+    private DrawingView drawingView;
+    private Button mBtnServer;
+    private Button mBtnClient;
 
     private ConnectMgr connectMgr;
-    private CastingMgr castingMgr;
+    private CastMgr castMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,23 +47,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        m_View = new DrawingView(this);
-        m_View.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        m_View.setEnabled(false);
+        drawingView = new DrawingView(this);
+        drawingView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        drawingView.setEnabled(false);
 
-        connectMgr = new ConnectMgr();
-        castingMgr = new CastingMgr();
-        castingMgr.setView(m_View);
+        connectMgr = MyApplication.getConnectMgr();
+        castMgr = MyApplication.getCastMgr();
+        castMgr.setView(drawingView);
 
-        m_btnServer = (Button) findViewById(R.id.Server);
-        m_btnServer.setOnClickListener(new View.OnClickListener() {
+        mBtnServer = (Button) findViewById(R.id.Server);
+        mBtnServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 connectMgr.startBeacon();
             }
         });
-        m_btnClient = (Button) findViewById(R.id.Client);
-        m_btnClient.setOnClickListener(new View.OnClickListener() {
+        mBtnClient = (Button) findViewById(R.id.Client);
+        mBtnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 connectMgr.startFinder();
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
 
         for (int size = motionEvent.getPointerCount(), i = 0; i < size; i++) {
-            castingMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i) , motionEvent.getY(i));
+            castMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i) , motionEvent.getY(i));
         }
 
         return false;

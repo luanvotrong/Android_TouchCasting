@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.luanvotrong.ConnectMgr.Beacon;
+import com.luanvotrong.Utilities.Define;
 import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.Utilities.TouchesPool;
 
@@ -17,12 +18,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Caster {
-    private int m_udpPort = 63678;
-    private int m_tcpPort = 63679;
     private String TAG = "Lulu Caster";
-    private String m_serviceName = "TouchCasting";
     private Beacon m_beacon;
-    private CastingMgr m_castingMgr;
+    private CastMgr m_castMgr;
     private ServerSocket m_serverSocket;
     private ArrayList<Socket> m_receiverSockets;
     private TouchesPool m_touchesPool;
@@ -39,7 +37,7 @@ public class Caster {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     Socket socket = m_serverSocket.accept();
-                    m_castingMgr.resetDimension();
+                    m_castMgr.resetDimension();
                     m_receiverSockets.add(socket);
                     ((Activity) m_context).runOnUiThread(new Runnable() {
                         @Override
@@ -85,8 +83,8 @@ public class Caster {
         }
     }
 
-    public void start(Context context, TouchesPool touchesPool, CastingMgr castingMgr) {
-        m_castingMgr = castingMgr;
+    public void start(Context context, TouchesPool touchesPool, CastMgr castingMgr) {
+        m_castMgr = castingMgr;
         m_context = context;
         m_touchesPool = touchesPool;
         m_receiverSockets = new ArrayList<>();
@@ -95,7 +93,7 @@ public class Caster {
         m_screenH = display.heightPixels;
 
         try {
-            m_serverSocket = new ServerSocket(m_tcpPort);
+            m_serverSocket = new ServerSocket(Define.PORT_CASTING_UDP);
         } catch (Exception e) {
             Log.d(TAG, e.toString());
         }
