@@ -9,11 +9,15 @@ import android.view.MotionEvent;
 
 import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.Utilities.TouchesPool;
+import com.luanvotrong.touchcasting.DrawingView;
+import com.luanvotrong.touchcasting.MyApplication;
 
 import java.util.ArrayList;
 
 
 public class CastingMgr {
+    private String TAG = "Lulu CastingMgr";
+
     private Context m_context;
     private TouchesPool m_touchesPool;
     private float m_screenW;
@@ -22,13 +26,30 @@ public class CastingMgr {
     private Caster m_caster;
     private Receiver m_receiver;
 
-    public CastingMgr(Context context, TouchesPool touchesPool) {
-        m_context = context;
-        m_touchesPool = touchesPool;
+    private DrawingView view;
 
-        DisplayMetrics display = context.getResources().getDisplayMetrics();
+    public enum CAST_TYPE {
+        NONE,
+        CASTER,
+        RECEIVER
+    }
+
+    private CAST_TYPE m_type;
+
+    public CastingMgr() {
+        m_context = MyApplication.getContext();
+        m_touchesPool = new TouchesPool();
+
+        DisplayMetrics display = m_context.getResources().getDisplayMetrics();
         m_screenW = display.widthPixels;
         m_screenH = display.heightPixels;
+
+        m_type = CAST_TYPE.NONE;
+        view = null;
+    }
+
+    public void setView(DrawingView view) {
+        this.view = view;
     }
 
     public void resetDimension() {
@@ -51,9 +72,22 @@ public class CastingMgr {
     }
 
     public void destroy() {
-        if (m_touchesInjector != null) {
+        try {
             m_touchesInjector.interrupt();
             m_touchesInjector = null;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+            m_touchesInjector = null;
+        }
+    }
+
+    public void onTouchEvent(int id, int touchType, float x, float y) {
+        switch (m_type) {
+            case CASTER:
+                break;
+            case RECEIVER:
+                view.setTouch(id, x, y, touchType);
+                break;
         }
     }
 

@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.luanvotrong.CastingServer.CastingMgr;
 import com.luanvotrong.ConnectMgr.ConnectMgr;
 
 /**
@@ -22,19 +23,13 @@ import com.luanvotrong.ConnectMgr.ConnectMgr;
  */
 
 public class MainActivity extends AppCompatActivity {
-    public enum CAST_TYPE {
-        NONE,
-        CASTER,
-        RECEIVER
-    }
-
-    private CAST_TYPE m_type = CAST_TYPE.NONE;
     private String TAG = "Lulu MainActivity";
     private DrawingView m_View;
     private Button m_btnServer;
     private Button m_btnClient;
 
     private ConnectMgr connectMgr;
+    private CastingMgr castingMgr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
         m_View.setEnabled(false);
 
         connectMgr = new ConnectMgr();
+        castingMgr = new CastingMgr();
+        castingMgr.setView(m_View);
 
         m_btnServer = (Button) findViewById(R.id.Server);
         m_btnServer.setOnClickListener(new View.OnClickListener() {
@@ -98,17 +95,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
 
         for (int size = motionEvent.getPointerCount(), i = 0; i < size; i++) {
-            int pointerId = motionEvent.getPointerId(i);
-            float x = motionEvent.getX(i);
-            float y = motionEvent.getY(i);
-
-            switch (m_type) {
-                case CASTER:
-                    break;
-                case RECEIVER:
-                    m_View.setTouch(pointerId, x, y, motionEvent.getActionMasked());
-                    break;
-            }
+            castingMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i) , motionEvent.getY(i));
         }
 
         return false;
