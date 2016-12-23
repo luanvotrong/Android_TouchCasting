@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         connectMgr = MyApplication.getConnectMgr();
         castMgr = MyApplication.getCastMgr();
         castMgr.setView(drawingView);
+        castMgr.setMainActivity(this);
 
         mBtnServer = (Button) findViewById(R.id.Server);
         mBtnServer.setOnClickListener(new View.OnClickListener() {
