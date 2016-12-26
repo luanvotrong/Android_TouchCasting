@@ -25,17 +25,21 @@ public class Caster {
     public void start(Socket socket) {
         touchesPool.Clear();
         this.socket = socket;
-
+        try {
+            this.socket.setTcpNoDelay(true);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
         mScreenW = MyApplication.getCastMgr().getScreenW();
         mScreenH = MyApplication.getCastMgr().getScreenH();
-        castingWorker = new Thread( new CastingWorker() );
+        castingWorker = new Thread(new CastingWorker());
     }
 
     public void stop() {
         try {
             castingWorker.interrupt();
             castingWorker = null;
-        }catch (Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, e.toString());
             castingWorker = null;
         }
