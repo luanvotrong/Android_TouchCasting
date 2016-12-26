@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import com.luanvotrong.CastingServer.CastMgr;
 import com.luanvotrong.ConnectMgr.ConnectMgr;
@@ -20,6 +21,7 @@ public class Wrapper {
     private MainActivity mainAcitivity;
 
     private LinearLayout mainLayout;
+    private ScrollView scrollView;
     private LinearLayout wrapperLayout;
     private DrawingView drawingView;
 
@@ -48,10 +50,13 @@ public class Wrapper {
         castMgr.setView(drawingView);
         castMgr.setMainActivity(mainAcitivity);
 
+        scrollView = new ScrollView(mainAcitivity);
         wrapperLayout = new LinearLayout(mainAcitivity);
         wrapperLayout.setOrientation(LinearLayout.VERTICAL);
         mainLayout = (LinearLayout) mainAcitivity.findViewById(R.id.linear_layout);
-        mainLayout.addView(wrapperLayout);
+
+        scrollView.addView(wrapperLayout);
+        mainLayout.addView(scrollView);
 
         mBtnServer = new Button(mainAcitivity);
         mBtnServer.setText("Server");
