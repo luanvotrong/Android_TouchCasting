@@ -14,6 +14,7 @@ public class MyApplication extends Application {
     private static Context context;
     private static ConnectMgr connectMgr;
     private static CastMgr castMgr;
+    private static Wrapper uiWrapper;
 
     @Override
     public void onCreate() {
@@ -21,6 +22,7 @@ public class MyApplication extends Application {
         context = getApplicationContext();
         connectMgr = new ConnectMgr();
         castMgr = new CastMgr();
+        uiWrapper = new Wrapper();
     }
 
     public static Context getContext() {
@@ -33,5 +35,9 @@ public class MyApplication extends Application {
 
     public static CastMgr getCastMgr() {
         return castMgr;
+    }
+
+    public static Wrapper getUIWrapper() {
+        return uiWrapper;
     }
 }

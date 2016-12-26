@@ -35,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        wrapper = new Wrapper(this);
-        wrapper.initUI();
+        wrapper = MyApplication.getUIWrapper();
+        wrapper.initUI(this);
     }
 
     @Override

@@ -33,11 +33,9 @@ public class Wrapper {
     private boolean isConfiguring;
     private boolean isDetectingGesture;
 
-    public Wrapper(MainActivity activity) {
-        this.mainAcitivity = activity;
-    }
+    public void initUI(MainActivity mainActivity) {
+        this.mainAcitivity = mainActivity;
 
-    public void initUI() {
         isConfiguring = false;
         isDetectingGesture = false;
 
