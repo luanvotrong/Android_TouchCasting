@@ -40,4 +40,8 @@ public class HostInfo {
     public String getName() {
         return this.name;
     }
+
+    public boolean isTimeout() {
+        return countdown < 0;
+    }
 }

@@ -1,12 +1,12 @@
 package com.luanvotrong.touchcasting;
 
-import android.app.Activity;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import com.luanvotrong.CastingServer.CastMgr;
 import com.luanvotrong.ConnectMgr.ConnectMgr;
@@ -16,8 +16,12 @@ import com.luanvotrong.Utilities.Define;
  * Created by luan.votrong on 12/26/2016.
  */
 
-public class Wrapper {
+public class Wrapper implements WrapperCallback {
     private MainActivity mainAcitivity;
+
+    private LinearLayout mainLayout;
+    private ScrollView scrollView;
+    private LinearLayout wrapperLayout;
     private DrawingView drawingView;
 
     private ConnectMgr connectMgr;
@@ -26,15 +30,28 @@ public class Wrapper {
     private Button mBtnServer;
     private Button mBtnClient;
     private boolean isConfiguring;
-    private boolean isDetectingGesture;
 
-    public Wrapper(MainActivity activity) {
-        this.mainAcitivity = activity;
+    private float screenW;
+    private float screenH;
+
+    private enum GESTURE_PHASE {
+        NONE,
+        PHASE1,//top left
+        PHASE2,//bot right
+        PHASE3,//top right
+        PHASE4 //bot left
     }
 
-    public void initUI() {
+    private GESTURE_PHASE gesturePhase;
+
+    public void initUI(MainActivity mainActivity) {
+        this.mainAcitivity = mainActivity;
+
         isConfiguring = false;
-        isDetectingGesture = false;
+        gesturePhase = GESTURE_PHASE.NONE;
+        DisplayMetrics display = MyApplication.getContext().getResources().getDisplayMetrics();
+        screenW = display.widthPixels;
+        screenH = display.heightPixels;
 
         drawingView = new DrawingView(mainAcitivity);
         drawingView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
@@ -45,7 +62,16 @@ public class Wrapper {
         castMgr.setView(drawingView);
         castMgr.setMainActivity(mainAcitivity);
 
-        mBtnServer = (Button) mainAcitivity.findViewById(R.id.Server);
+        scrollView = new ScrollView(mainAcitivity);
+        wrapperLayout = new LinearLayout(mainAcitivity);
+        wrapperLayout.setOrientation(LinearLayout.VERTICAL);
+        mainLayout = (LinearLayout) mainAcitivity.findViewById(R.id.linear_layout);
+
+        scrollView.addView(wrapperLayout);
+        mainLayout.addView(scrollView);
+
+        mBtnServer = new Button(mainAcitivity);
+        mBtnServer.setText("Server");
         mBtnServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,22 +87,42 @@ public class Wrapper {
                         castMgr.startCaster();
                         break;
                 }
+                disableUI();
             }
         });
-        mBtnServer.setVisibility(Button.INVISIBLE);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        wrapperLayout.addView(mBtnServer, params);
 
-        mBtnClient = (Button) mainAcitivity.findViewById(R.id.Client);
+        mBtnClient = new Button(mainAcitivity);
+        mBtnClient.setText("Client");
         mBtnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 connectMgr.startFinder();
+                disableUI();
             }
         });
-        mBtnClient.setVisibility(Button.INVISIBLE);
+        wrapperLayout.addView(mBtnClient, params);
 
-        for(int i=0; i<5; i++) {
-
+        for (int i = 0; i < 20; i++) {
+            Button button = new Button(mainAcitivity);
+            button.setText("fasfsdaf fdsafsdafdsa fdsafsdf fdasfad");
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    disableUI();
+                }
+            });
+            wrapperLayout.addView(button);
         }
+
+        wrapperLayout.setVisibility(LinearLayout.GONE);
+    }
+
+    public void disableUI() {
+        wrapperLayout.setVisibility(LinearLayout.GONE);
     }
 
     public void handlingUITouchGesture(MotionEvent motionEvent) {
@@ -92,30 +138,53 @@ public class Wrapper {
             castMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i), motionEvent.getY(i));
         }
 
+        float x = motionEvent.getX();
+        float y = motionEvent.getY();
         //handle touch gesture
         switch (motionEvent.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                DisplayMetrics display = MyApplication.getContext().getResources().getDisplayMetrics();
-                if (motionEvent.getY() > display.heightPixels - Define.GESTURE_OFFSET) {
-                    isDetectingGesture = true;
+                if (gesturePhase == GESTURE_PHASE.NONE) {
+                    if (x < screenW / 2 && y > screenH / 2) {
+                        gesturePhase = GESTURE_PHASE.PHASE1;
+                    }
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                switch (gesturePhase) {
+                    case PHASE1:
+                        if (x > screenW / 2 && y < screenH / 2) {
+                            gesturePhase = GESTURE_PHASE.PHASE2;
+                        }
+                        break;
+                    case PHASE2:
+                        if (x < screenW / 2 && y < screenH / 2) {
+                            gesturePhase = GESTURE_PHASE.PHASE3;
+                        }
+                        break;
+                    case PHASE3:
+                        if (x > screenW / 2 && y > screenH / 2) {
+                            gesturePhase = GESTURE_PHASE.PHASE4;
+                        }
+                        break;
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (isDetectingGesture) {
-                    if (motionEvent.getY() < Define.GESTURE_OFFSET) {
-                        if (isConfiguring) {
-                            isConfiguring = !isConfiguring;
-                            mBtnServer.setVisibility(Button.INVISIBLE);
-                            mBtnClient.setVisibility(Button.INVISIBLE);
-                        } else {
-                            isConfiguring = !isConfiguring;
-                            mBtnServer.setVisibility(Button.VISIBLE);
-                            mBtnClient.setVisibility(Button.VISIBLE);
-                        }
+                if (gesturePhase == GESTURE_PHASE.PHASE4) {
+                    if (isConfiguring) {
+                        isConfiguring = !isConfiguring;
+                        wrapperLayout.setVisibility(LinearLayout.GONE);
+                    } else {
+                        isConfiguring = !isConfiguring;
+                        wrapperLayout.setVisibility(LinearLayout.VISIBLE);
                     }
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onUpdateServerList() {
+        //Todo: update server list
     }
 }

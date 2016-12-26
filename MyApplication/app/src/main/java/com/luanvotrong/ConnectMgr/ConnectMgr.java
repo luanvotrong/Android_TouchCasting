@@ -1,8 +1,10 @@
 package com.luanvotrong.ConnectMgr;
 
+import android.content.AbstractThreadedSyncAdapter;
 import android.util.Log;
 
 import com.luanvotrong.Utilities.HostInfo;
+import com.luanvotrong.touchcasting.WrapperCallback;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -20,6 +22,8 @@ public class ConnectMgr implements FinderCallback {
     private TYPE type = TYPE.NONE;
     private Beacon beacon;
     private Finder finder;
+    private WrapperCallback wrapperCallback;
+    private Thread updateThread;
 
     public ConnectMgr() {
         listBeacon = new ArrayList<>();
@@ -51,10 +55,14 @@ public class ConnectMgr implements FinderCallback {
     public void startFinder() {
         switch (type) {
             case NONE:
+                updateThread = new Thread(new Updater());
+                updateThread.start();
                 finder.start();
                 break;
             case SHOUTER:
                 stopBeacon();
+                updateThread = new Thread(new Updater());
+                updateThread.start();
                 finder.start();
                 break;
             case FINDER:
@@ -70,6 +78,8 @@ public class ConnectMgr implements FinderCallback {
 
     public void stopFinder() {
         finder.stop();
+        updateThread.interrupt();
+        updateThread = null;
         type = TYPE.NONE;
     }
 
@@ -87,6 +97,7 @@ public class ConnectMgr implements FinderCallback {
             listBeacon.add(info);
         } else {
             info.setName(beaconName);
+            info.resetCountdown();
         }
 
         Log.d(TAG, "Found new ---------------------------------------------------");
@@ -94,13 +105,35 @@ public class ConnectMgr implements FinderCallback {
             info = listBeacon.get(i);
             Log.d(TAG, "Name: " + info.getName() + " IP: " + info.getInetAddress().getHostAddress());
         }
+        wrapperCallback.onUpdateServerList();
     }
 
 
     private class Updater implements Runnable {
+        private long last;
+
+        public Updater() {
+            last = System.currentTimeMillis();
+        }
+
         @Override
         public void run() {
-            //Todo: implement check dead host
+            while (!Thread.currentThread().isInterrupted()) {
+                long dt = System.currentTimeMillis() - last;
+                if (dt > 1000) {
+                    for (int i = 0, size = listBeacon.size(); i < size; i++) {
+                        HostInfo info = listBeacon.get(i);
+                        info.update(dt / 1000);
+                        if(info.isTimeout()) {
+                            listBeacon.remove(i);
+                            i--;
+                            size = listBeacon.size();
+                            wrapperCallback.onUpdateServerList();
+                        }
+                    }
+                    last += dt;
+                }
+            }
         }
     }
 }
