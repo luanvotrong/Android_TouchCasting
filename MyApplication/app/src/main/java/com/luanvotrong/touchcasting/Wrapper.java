@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.luanvotrong.CastingServer.CastMgr;
 import com.luanvotrong.ConnectMgr.ConnectMgr;
@@ -18,7 +19,8 @@ import com.luanvotrong.Utilities.Define;
 public class Wrapper {
     private MainActivity mainAcitivity;
 
-    private LinearLayout linearLayout;
+    private LinearLayout mainLayout;
+    private LinearLayout wrapperLayout;
     private DrawingView drawingView;
 
     private ConnectMgr connectMgr;
@@ -46,7 +48,10 @@ public class Wrapper {
         castMgr.setView(drawingView);
         castMgr.setMainActivity(mainAcitivity);
 
-        linearLayout = (LinearLayout) mainAcitivity.findViewById(R.id.linear_layout);
+        wrapperLayout = new LinearLayout(mainAcitivity);
+        wrapperLayout.setOrientation(LinearLayout.VERTICAL);
+        mainLayout = (LinearLayout) mainAcitivity.findViewById(R.id.linear_layout);
+        mainLayout.addView(wrapperLayout);
 
         mBtnServer = new Button(mainAcitivity);
         mBtnServer.setText("Server");
@@ -65,13 +70,13 @@ public class Wrapper {
                         castMgr.startCaster();
                         break;
                 }
+                disableUI();
             }
         });
-        mBtnServer.setVisibility(Button.INVISIBLE);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        linearLayout.addView(mBtnServer, params);
+        wrapperLayout.addView(mBtnServer, params);
 
         mBtnClient = new Button(mainAcitivity);
         mBtnClient.setText("Client");
@@ -79,14 +84,28 @@ public class Wrapper {
             @Override
             public void onClick(View v) {
                 connectMgr.startFinder();
+                disableUI();
             }
         });
-        mBtnClient.setVisibility(Button.INVISIBLE);
-        linearLayout.addView(mBtnClient, params);
+        wrapperLayout.addView(mBtnClient, params);
 
-        for(int i=0; i<5; i++) {
-
+        for(int i=0; i<20; i++) {
+            Button button = new Button(mainAcitivity);
+            button.setText("fasfsdaf fdsafsdafdsa fdsafsdf fdasfad");
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    disableUI();
+                }
+            });
+            wrapperLayout.addView(button);
         }
+
+        wrapperLayout.setVisibility(LinearLayout.GONE);
+    }
+
+    public void disableUI() {
+        wrapperLayout.setVisibility(LinearLayout.GONE);
     }
 
     public void handlingUITouchGesture(MotionEvent motionEvent) {
@@ -116,12 +135,10 @@ public class Wrapper {
                     if (motionEvent.getY() < Define.GESTURE_OFFSET) {
                         if (isConfiguring) {
                             isConfiguring = !isConfiguring;
-                            mBtnServer.setVisibility(Button.INVISIBLE);
-                            mBtnClient.setVisibility(Button.INVISIBLE);
+                            wrapperLayout.setVisibility(LinearLayout.GONE);
                         } else {
                             isConfiguring = !isConfiguring;
-                            mBtnServer.setVisibility(Button.VISIBLE);
-                            mBtnClient.setVisibility(Button.VISIBLE);
+                            wrapperLayout.setVisibility(LinearLayout.VISIBLE);
                         }
                     }
                 }
