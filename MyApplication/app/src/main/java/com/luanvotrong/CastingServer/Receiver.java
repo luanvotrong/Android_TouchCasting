@@ -6,8 +6,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 
 import com.luanvotrong.Utilities.Touch;
-import com.luanvotrong.touchcasting.DrawingView;
-import com.luanvotrong.touchcasting.MainActivity;
 import com.luanvotrong.touchcasting.MyApplication;
 
 import java.io.DataInputStream;
@@ -25,7 +23,7 @@ public class Receiver {
     private ArrayList<String> mTouches;
     private float mScreenW;
     private float mScreenH;
-    private MainActivity activity;
+    private Activity activity;
 
     public ArrayList<String> getTouches() {
         return mTouches;
