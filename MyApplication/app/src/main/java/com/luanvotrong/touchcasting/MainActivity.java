@@ -1,11 +1,13 @@
 package com.luanvotrong.touchcasting;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private ConnectMgr connectMgr;
     private CastMgr castMgr;
 
+    private boolean isConfiguring;
+    private boolean isDetectingGesture;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
             }
         }
+
+        isConfiguring = false;
+        isDetectingGesture = false;
 
         drawingView = new DrawingView(this);
         drawingView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
@@ -74,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+        mBtnServer.setVisibility(Button.INVISIBLE);
+
         mBtnClient = (Button) findViewById(R.id.Client);
         mBtnClient.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 connectMgr.startFinder();
             }
         });
+        mBtnClient.setVisibility(Button.INVISIBLE);
     }
 
     @Override
@@ -108,6 +119,32 @@ public class MainActivity extends AppCompatActivity {
 
         for (int size = motionEvent.getPointerCount(), i = 0; i < size; i++) {
             castMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i), motionEvent.getY(i));
+        }
+
+        //handle touch gesture
+        switch (motionEvent.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                DisplayMetrics display = MyApplication.getContext().getResources().getDisplayMetrics();
+                if (motionEvent.getY() > display.heightPixels - 10) {
+                    isDetectingGesture = true;
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                if (isDetectingGesture) {
+                    if (motionEvent.getY() < 10) {
+                        if (isConfiguring) {
+                            isConfiguring = !isConfiguring;
+                            mBtnServer.setVisibility(Button.INVISIBLE);
+                            mBtnClient.setVisibility(Button.INVISIBLE);
+                        } else {
+                            isConfiguring = !isConfiguring;
+                            mBtnServer.setVisibility(Button.VISIBLE);
+                            mBtnClient.setVisibility(Button.VISIBLE);
+                        }
+                    }
+                }
+                break;
         }
 
         return false;

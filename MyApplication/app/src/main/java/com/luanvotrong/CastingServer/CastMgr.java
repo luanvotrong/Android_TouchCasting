@@ -22,7 +22,7 @@ public class CastMgr {
 
     private DrawingView view;
 
-    public static enum CAST_TYPE {
+    public enum CAST_TYPE {
         NONE,
         CASTER,
         RECEIVER
