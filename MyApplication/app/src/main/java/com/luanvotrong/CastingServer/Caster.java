@@ -70,7 +70,7 @@ public class Caster {
                             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
                             dos.writeUTF(mess);
                         } catch (Exception e) {
-
+                            Log.e(TAG, e.toString());
                         }
                     }
                 } catch (Exception e) {

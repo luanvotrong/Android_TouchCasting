@@ -22,7 +22,7 @@ public class CastMgr {
 
     private DrawingView view;
 
-    public enum CAST_TYPE {
+    public static enum CAST_TYPE {
         NONE,
         CASTER,
         RECEIVER
@@ -39,6 +39,10 @@ public class CastMgr {
 
         m_type = CAST_TYPE.NONE;
         view = null;
+    }
+
+    public CAST_TYPE getType() {
+        return m_type;
     }
 
     public void setView(DrawingView view) {
@@ -77,10 +81,20 @@ public class CastMgr {
         casterMgr.start();
     }
 
+    public void stopCaster() {
+        casterMgr.stop();
+        casterMgr = null;
+    }
+
     public void startReceiver() {
         resetDimension();
         receiver = new Receiver();
         receiver.start();
+    }
+
+    public void stopReceiver() {
+        receiver.stop();
+        receiver = null;
     }
 
     public void onTouchEvent(int id, int touchType, float x, float y) {

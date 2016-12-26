@@ -61,6 +61,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 connectMgr.startBeacon();
+                switch (castMgr.getType()) {
+                    case NONE:
+                        castMgr.startCaster();
+                        break;
+                    case CASTER:
+                        break;
+                    case RECEIVER:
+                        castMgr.stopReceiver();
+                        castMgr.startCaster();
+                        break;
+                }
             }
         });
         mBtnClient = (Button) findViewById(R.id.Client);
@@ -96,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
 
         for (int size = motionEvent.getPointerCount(), i = 0; i < size; i++) {
-            castMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i) , motionEvent.getY(i));
+            castMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i), motionEvent.getY(i));
         }
 
         return false;
