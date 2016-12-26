@@ -1,6 +1,5 @@
 package com.luanvotrong.touchcasting;
 
-import android.app.Activity;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,6 +17,8 @@ import com.luanvotrong.Utilities.Define;
 
 public class Wrapper {
     private MainActivity mainAcitivity;
+
+    private LinearLayout linearLayout;
     private DrawingView drawingView;
 
     private ConnectMgr connectMgr;
@@ -45,7 +46,10 @@ public class Wrapper {
         castMgr.setView(drawingView);
         castMgr.setMainActivity(mainAcitivity);
 
-        mBtnServer = (Button) mainAcitivity.findViewById(R.id.Server);
+        linearLayout = (LinearLayout) mainAcitivity.findViewById(R.id.linear_layout);
+
+        mBtnServer = new Button(mainAcitivity);
+        mBtnServer.setText("Server");
         mBtnServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,8 +68,13 @@ public class Wrapper {
             }
         });
         mBtnServer.setVisibility(Button.INVISIBLE);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        linearLayout.addView(mBtnServer, params);
 
-        mBtnClient = (Button) mainAcitivity.findViewById(R.id.Client);
+        mBtnClient = new Button(mainAcitivity);
+        mBtnClient.setText("Client");
         mBtnClient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,6 +82,7 @@ public class Wrapper {
             }
         });
         mBtnClient.setVisibility(Button.INVISIBLE);
+        linearLayout.addView(mBtnClient, params);
 
         for(int i=0; i<5; i++) {
 
