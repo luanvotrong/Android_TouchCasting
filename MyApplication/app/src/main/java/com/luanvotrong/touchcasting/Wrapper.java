@@ -1,5 +1,6 @@
 package com.luanvotrong.touchcasting;
 
+import android.app.Activity;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,13 +12,14 @@ import android.widget.ScrollView;
 import com.luanvotrong.CastingServer.CastMgr;
 import com.luanvotrong.ConnectMgr.ConnectMgr;
 import com.luanvotrong.Utilities.Define;
+import com.luanvotrong.Utilities.Utilities;
 
 /**
  * Created by luan.votrong on 12/26/2016.
  */
 
 public class Wrapper implements WrapperCallback {
-    private MainActivity mainAcitivity;
+    private Activity mainAcitivity;
 
     private LinearLayout mainLayout;
     private ScrollView scrollView;
@@ -44,7 +46,7 @@ public class Wrapper implements WrapperCallback {
 
     private GESTURE_PHASE gesturePhase;
 
-    public void initUI(MainActivity mainActivity) {
+    public void initUI(Activity mainActivity) {
         this.mainAcitivity = mainActivity;
 
         isConfiguring = false;
@@ -108,7 +110,7 @@ public class Wrapper implements WrapperCallback {
 
         for (int i = 0; i < 20; i++) {
             Button button = new Button(mainAcitivity);
-            button.setText("fasfsdaf fdsafsdafdsa fdsafsdf fdasfad");
+            button.setText("server " + i + " " + Utilities.getDeviceName());
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

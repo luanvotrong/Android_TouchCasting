@@ -1,11 +1,10 @@
 package com.luanvotrong.CastingServer;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
 import com.luanvotrong.touchcasting.DrawingView;
-import com.luanvotrong.touchcasting.MainActivity;
 import com.luanvotrong.touchcasting.MyApplication;
 
 
@@ -15,7 +14,7 @@ public class CastMgr {
     private Context context;
     private float mScreenW;
     private float mScreenH;
-    private MainActivity mainActivity;
+    private Activity mainActivity;
 
     private CasterMgr casterMgr;
     private Receiver receiver;
@@ -53,11 +52,11 @@ public class CastMgr {
         return this.view;
     }
 
-    public void setMainActivity(MainActivity mainActivity) {
+    public void setMainActivity(Activity mainActivity) {
         this.mainActivity = mainActivity;
     }
 
-    public MainActivity getMainActivity() {
+    public Activity getMainActivity() {
         return this.mainActivity;
     }
 
