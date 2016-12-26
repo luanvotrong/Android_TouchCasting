@@ -28,7 +28,7 @@ public class DrawingView extends SurfaceView {
             m_id = id;
             m_x = x;
             m_y = y;
-            m_color = Color.rgb(0 + (int)(Math.random() * 255), 0 + (int)(Math.random() * 255), 0 + (int)(Math.random() * 255));
+            m_color = Color.rgb((int)(Math.random() * 255), (int)(Math.random() * 255), (int)(Math.random() * 255));
         }
     }
 

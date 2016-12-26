@@ -13,9 +13,10 @@
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
 
-    <RelativeLayout
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="516dp">
 
         <Button
             android:text="Client"
@@ -38,13 +39,6 @@
             android:elevation="0dp"
             android:layout_alignParentRight="false"
             android:layout_alignParentEnd="false" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
     </LinearLayout>
 
 </FrameLayout>
