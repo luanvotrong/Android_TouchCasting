@@ -190,15 +190,14 @@ public class Wrapper implements WrapperCallback {
 
     @Override
     public void onUpdateServerList() {
-        for (int i = 0, size = mBtnServers.size(); i < size; i++) {
-            wrapperLayout.removeView(mBtnServers.get(i));
-        }
+
         mBtnServers.clear();
 
         ArrayList<HostInfo> hostInfos = MyApplication.getConnectMgr().getListBeacon();
         for (int i = 0, size = hostInfos.size(); i < size; i++) {
             HostInfo hostInfo = hostInfos.get(i);
             Button btn = new Button(mainAcitivity);
+            btn.setTag("Btn");
             btn.setText(hostInfo.getName());
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -210,6 +209,10 @@ public class Wrapper implements WrapperCallback {
             mainAcitivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    wrapperLayout.removeAllViews();
+                    wrapperLayout.addView(mBtnServer);
+                    wrapperLayout.addView(mBtnClient);
+                    wrapperLayout.addView(mBtnCancel);
                     for (int j = 0, size = mBtnServers.size(); j < size; j++) {
                         wrapperLayout.addView(mBtnServers.get(j));
                     }
