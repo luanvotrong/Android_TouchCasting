@@ -1,6 +1,7 @@
 package com.luanvotrong.touchcasting;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.util.DisplayMetrics;
 import android.view.MotionEvent;
 import android.view.View;
@@ -15,7 +16,9 @@ import com.luanvotrong.Utilities.Define;
 import com.luanvotrong.Utilities.HostInfo;
 import com.luanvotrong.Utilities.Utilities;
 
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 /**
@@ -183,8 +186,17 @@ public class Wrapper implements WrapperCallback {
                         isConfiguring = !isConfiguring;
                         wrapperLayout.setVisibility(LinearLayout.VISIBLE);
                     }
+                    gesturePhase = GESTURE_PHASE.NONE;
                 }
                 break;
+        }
+    }
+
+    private class StartReceiver extends AsyncTask<InetAddress, Void, Void> {
+        @Override
+        protected Void doInBackground(InetAddress... params) {
+            MyApplication.getCastMgr().startReceiver(params[0]);
+            return null;
         }
     }
 
@@ -195,14 +207,14 @@ public class Wrapper implements WrapperCallback {
 
         ArrayList<HostInfo> hostInfos = MyApplication.getConnectMgr().getListBeacon();
         for (int i = 0, size = hostInfos.size(); i < size; i++) {
-            HostInfo hostInfo = hostInfos.get(i);
+            final HostInfo hostInfo = hostInfos.get(i);
             Button btn = new Button(mainAcitivity);
             btn.setTag("Btn");
             btn.setText(hostInfo.getName());
             btn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    disableUI();
+                    new StartReceiver().execute(hostInfo.getInetAddress());
                 }
             });
             mBtnServers.add(btn);
