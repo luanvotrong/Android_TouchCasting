@@ -32,12 +32,6 @@ public class CasterMgr {
                     Caster caster = new Caster();
                     caster.start(socket);
                     casters.add(caster);
-                    ((Activity) MyApplication.getContext()).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(MyApplication.getContext(), "Connected " + casters.size() + " client", Toast.LENGTH_LONG).show();
-                        }
-                    });
                 } catch (Exception e) {
                     Log.d(TAG, e.toString());
                 }
@@ -45,6 +39,9 @@ public class CasterMgr {
         }
     }
 
+    public CasterMgr() {
+        casters = new ArrayList<>();
+    }
 
     public void start() {
         try {

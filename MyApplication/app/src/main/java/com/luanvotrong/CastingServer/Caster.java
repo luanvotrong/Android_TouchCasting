@@ -33,6 +33,7 @@ public class Caster {
         mScreenW = MyApplication.getCastMgr().getScreenW();
         mScreenH = MyApplication.getCastMgr().getScreenH();
         castingWorker = new Thread(new CastingWorker());
+        castingWorker.start();
     }
 
     public void stop() {

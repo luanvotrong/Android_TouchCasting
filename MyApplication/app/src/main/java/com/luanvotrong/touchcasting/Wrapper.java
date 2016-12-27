@@ -12,12 +12,8 @@ import android.widget.ScrollView;
 
 import com.luanvotrong.CastingServer.CastMgr;
 import com.luanvotrong.ConnectMgr.ConnectMgr;
-import com.luanvotrong.Utilities.Define;
 import com.luanvotrong.Utilities.HostInfo;
-import com.luanvotrong.Utilities.Utilities;
 
-import java.io.ObjectOutputStream;
-import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
@@ -67,6 +63,7 @@ public class Wrapper implements WrapperCallback {
         drawingView = new DrawingView(mainAcitivity);
         drawingView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
         drawingView.setEnabled(false);
+        drawingView.setVisibility(View.GONE);
 
         connectMgr = MyApplication.getConnectMgr();
         castMgr = MyApplication.getCastMgr();
@@ -79,6 +76,7 @@ public class Wrapper implements WrapperCallback {
         mainLayout = (LinearLayout) mainAcitivity.findViewById(R.id.linear_layout);
 
         scrollView.addView(wrapperLayout);
+        mainLayout.addView(drawingView);
         mainLayout.addView(scrollView);
 
         mBtnServer = new Button(mainAcitivity);
@@ -215,6 +213,8 @@ public class Wrapper implements WrapperCallback {
                 @Override
                 public void onClick(View v) {
                     new StartReceiver().execute(hostInfo.getInetAddress());
+                    drawingView.setVisibility(View.VISIBLE);
+                    disableUI();
                 }
             });
             mBtnServers.add(btn);
