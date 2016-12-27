@@ -12,7 +12,11 @@ import android.widget.ScrollView;
 import com.luanvotrong.CastingServer.CastMgr;
 import com.luanvotrong.ConnectMgr.ConnectMgr;
 import com.luanvotrong.Utilities.Define;
+import com.luanvotrong.Utilities.HostInfo;
 import com.luanvotrong.Utilities.Utilities;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * Created by luan.votrong on 12/26/2016.
@@ -31,6 +35,8 @@ public class Wrapper implements WrapperCallback {
 
     private Button mBtnServer;
     private Button mBtnClient;
+    private Button mBtnCancel;
+    private ArrayList<Button> mBtnServers;
     private boolean isConfiguring;
 
     private float screenW;
@@ -89,7 +95,6 @@ public class Wrapper implements WrapperCallback {
                         castMgr.startCaster();
                         break;
                 }
-                disableUI();
             }
         });
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -103,24 +108,22 @@ public class Wrapper implements WrapperCallback {
             @Override
             public void onClick(View v) {
                 connectMgr.startFinder();
-                disableUI();
             }
         });
         wrapperLayout.addView(mBtnClient, params);
 
-        for (int i = 0; i < 20; i++) {
-            Button button = new Button(mainAcitivity);
-            button.setText("server " + i + " " + Utilities.getDeviceName());
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    disableUI();
-                }
-            });
-            wrapperLayout.addView(button);
-        }
-
+        mBtnCancel = new Button(mainAcitivity);
+        mBtnCancel.setText("Cancel");
+        mBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disableUI();
+            }
+        });
+        wrapperLayout.addView(mBtnCancel, params);
         wrapperLayout.setVisibility(LinearLayout.GONE);
+
+        mBtnServers = new ArrayList<>();
     }
 
     public void disableUI() {
@@ -187,6 +190,31 @@ public class Wrapper implements WrapperCallback {
 
     @Override
     public void onUpdateServerList() {
-        //Todo: update server list
+        for (int i = 0, size = mBtnServers.size(); i < size; i++) {
+            wrapperLayout.removeView(mBtnServers.get(i));
+        }
+        mBtnServers.clear();
+
+        ArrayList<HostInfo> hostInfos = MyApplication.getConnectMgr().getListBeacon();
+        for (int i = 0, size = hostInfos.size(); i < size; i++) {
+            HostInfo hostInfo = hostInfos.get(i);
+            Button btn = new Button(mainAcitivity);
+            btn.setText(hostInfo.getName());
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    disableUI();
+                }
+            });
+            mBtnServers.add(btn);
+            mainAcitivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int j = 0, size = mBtnServers.size(); j < size; j++) {
+                        wrapperLayout.addView(mBtnServers.get(j));
+                    }
+                }
+            });
+        }
     }
 }

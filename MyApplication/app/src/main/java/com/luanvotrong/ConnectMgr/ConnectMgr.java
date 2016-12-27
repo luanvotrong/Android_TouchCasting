@@ -4,6 +4,7 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.util.Log;
 
 import com.luanvotrong.Utilities.HostInfo;
+import com.luanvotrong.touchcasting.MyApplication;
 import com.luanvotrong.touchcasting.WrapperCallback;
 
 import java.net.InetAddress;
@@ -22,7 +23,6 @@ public class ConnectMgr implements FinderCallback {
     private TYPE type = TYPE.NONE;
     private Beacon beacon;
     private Finder finder;
-    private WrapperCallback wrapperCallback;
     private Thread updateThread;
 
     public ConnectMgr() {
@@ -105,7 +105,7 @@ public class ConnectMgr implements FinderCallback {
             info = listBeacon.get(i);
             Log.d(TAG, "Name: " + info.getName() + " IP: " + info.getInetAddress().getHostAddress());
         }
-        wrapperCallback.onUpdateServerList();
+        MyApplication.getUIWrapper().onUpdateServerList();
     }
 
 
@@ -128,7 +128,7 @@ public class ConnectMgr implements FinderCallback {
                             listBeacon.remove(i);
                             i--;
                             size = listBeacon.size();
-                            wrapperCallback.onUpdateServerList();
+                            MyApplication.getUIWrapper().onUpdateServerList();
                         }
                     }
                     last += dt;

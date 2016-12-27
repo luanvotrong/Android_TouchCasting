@@ -7,6 +7,8 @@ import android.util.DisplayMetrics;
 import com.luanvotrong.touchcasting.DrawingView;
 import com.luanvotrong.touchcasting.MyApplication;
 
+import java.net.InetAddress;
+
 
 public class CastMgr {
     private String TAG = "Lulu CastMgr";
@@ -85,10 +87,10 @@ public class CastMgr {
         casterMgr = null;
     }
 
-    public void startReceiver() {
+    public void startReceiver(InetAddress inetAddress) {
         resetDimension();
         receiver = new Receiver();
-        receiver.start();
+        receiver.start(inetAddress);
     }
 
     public void stopReceiver() {
