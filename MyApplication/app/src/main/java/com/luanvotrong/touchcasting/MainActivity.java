@@ -7,8 +7,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -18,6 +21,11 @@ import android.view.WindowManager;
 public class MainActivity extends AppCompatActivity {
     private String TAG = "Lulu MainActivity";
     private Wrapper wrapper;
+    private DrawingView drawingView;
+
+    public DrawingView getDrawingView() {
+        return drawingView;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +42,10 @@ public class MainActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
             }
         }
+        drawingView = new DrawingView(this);
+        drawingView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        drawingView.setEnabled(false);
+        drawingView.setVisibility(View.GONE);
 
         wrapper = MyApplication.getUIWrapper();
         wrapper.initUI(this);

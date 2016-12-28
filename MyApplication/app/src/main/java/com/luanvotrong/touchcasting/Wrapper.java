@@ -63,10 +63,7 @@ public class Wrapper implements WrapperCallback {
         screenW = display.widthPixels;
         screenH = display.heightPixels;
 
-        drawingView = new DrawingView(mainAcitivity);
-        drawingView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        drawingView.setEnabled(false);
-        drawingView.setVisibility(View.GONE);
+        this.drawingView = ((MainActivity)mainActivity).getDrawingView();
 
         connectMgr = MyApplication.getConnectMgr();
         castMgr = MyApplication.getCastMgr();
@@ -179,7 +176,7 @@ public class Wrapper implements WrapperCallback {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (gesturePhase == GESTURE_PHASE.PHASE4) {
+                if (castMgr.getType() == CastMgr.CAST_TYPE.NONE && gesturePhase == GESTURE_PHASE.PHASE4) {
                     try {
                         if (isConfiguring) {
                             isConfiguring = !isConfiguring;
