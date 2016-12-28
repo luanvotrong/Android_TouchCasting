@@ -3,6 +3,7 @@ package com.luanvotrong.touchcasting;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
  */
 
 public class Wrapper implements WrapperCallback {
+    private String TAG = "Lulu Lib Wrapper";
+
     private Activity mainAcitivity;
 
     private LinearLayout mainLayout;
@@ -177,14 +180,18 @@ public class Wrapper implements WrapperCallback {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (gesturePhase == GESTURE_PHASE.PHASE4) {
-                    if (isConfiguring) {
-                        isConfiguring = !isConfiguring;
-                        wrapperLayout.setVisibility(LinearLayout.GONE);
-                    } else {
-                        isConfiguring = !isConfiguring;
-                        wrapperLayout.setVisibility(LinearLayout.VISIBLE);
+                    try {
+                        if (isConfiguring) {
+                            isConfiguring = !isConfiguring;
+                            wrapperLayout.setVisibility(LinearLayout.GONE);
+                        } else {
+                            isConfiguring = !isConfiguring;
+                            wrapperLayout.setVisibility(LinearLayout.VISIBLE);
+                        }
+                        gesturePhase = GESTURE_PHASE.NONE;
+                    } catch(Exception e) {
+                        Log.e(TAG, e.toString());
                     }
-                    gesturePhase = GESTURE_PHASE.NONE;
                 }
                 break;
         }
