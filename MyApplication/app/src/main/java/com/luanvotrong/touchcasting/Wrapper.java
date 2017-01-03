@@ -54,7 +54,7 @@ public class Wrapper implements WrapperCallback {
 
     private GESTURE_PHASE gesturePhase;
 
-    public void initUI(Activity mainActivity) {
+    public void initUI(Activity mainActivity, DrawingView drawingView) {
         this.mainAcitivity = mainActivity;
 
         isConfiguring = false;
@@ -63,7 +63,7 @@ public class Wrapper implements WrapperCallback {
         screenW = display.widthPixels;
         screenH = display.heightPixels;
 
-        this.drawingView = ((MainActivity)mainActivity).getDrawingView();
+        this.drawingView = drawingView;
 
         connectMgr = MyApplication.getConnectMgr();
         castMgr = MyApplication.getCastMgr();

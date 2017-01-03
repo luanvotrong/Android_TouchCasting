@@ -1,6 +1,7 @@
 package com.luanvotrong.ConnectMgr;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.util.Log;
 import android.net.DhcpInfo;
 import android.net.wifi.WifiManager;
@@ -48,7 +49,6 @@ public class Beacon {
 
     private class Shouter implements Runnable {
         private String TAG = "Lulu Shouter";
-        private long m_last = 0;
 
         private InetAddress getBroadcastAddress() throws IOException {
             WifiManager wifi = (WifiManager) m_context.getSystemService(Context.WIFI_SERVICE);
@@ -66,24 +66,18 @@ public class Beacon {
             return InetAddress.getByAddress(quads);
         }
 
-        public Shouter() {
-            m_last = System.currentTimeMillis();
-        }
-
         @Override
         public void run() {
             try {
                 while (!Thread.currentThread().isInterrupted()) {
                     InetAddress local = getBroadcastAddress();
                     while (!Thread.currentThread().isInterrupted()) {
-                        if (System.currentTimeMillis() - m_last > Define.INTERVAL_SHOUTING) {
-                            int msg_length = m_serviceName.length();
-                            byte[] message = m_serviceName.getBytes();
-                            DatagramPacket p = new DatagramPacket(message, msg_length, local, Define.PORT_SHOUTING_UDP);
-                            m_datagramSocket.send(p);
-                            Log.d(TAG, "Sent: " + m_serviceName);
-                            m_last = System.currentTimeMillis();
-                        }
+                        int msg_length = m_serviceName.length();
+                        byte[] message = m_serviceName.getBytes();
+                        DatagramPacket p = new DatagramPacket(message, msg_length, local, Define.PORT_SHOUTING_UDP);
+                        m_datagramSocket.send(p);
+                        Log.d(TAG, "Sent: " + m_serviceName);
+                        SystemClock.sleep(Define.INTERVAL_SHOUTING);
                     }
                 }
             } catch (Exception e) {

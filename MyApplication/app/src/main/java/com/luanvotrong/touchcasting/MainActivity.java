@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         drawingView.setVisibility(View.GONE);
 
         wrapper = MyApplication.getUIWrapper();
-        wrapper.initUI(this);
+        wrapper.initUI(this, drawingView);
     }
 
     @Override
