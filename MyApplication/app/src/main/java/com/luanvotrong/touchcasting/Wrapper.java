@@ -75,7 +75,11 @@ public class Wrapper implements WrapperCallback {
         wrapperLayout.setOrientation(LinearLayout.VERTICAL);
 
         scrollView.addView(wrapperLayout);
-        mainLayout.addView(drawingView);
+        try {
+            mainLayout.addView(drawingView);
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+        }
         mainLayout.addView(scrollView);
 
         mBtnServer = new Button(mainAcitivity);
@@ -131,18 +135,20 @@ public class Wrapper implements WrapperCallback {
     }
 
     public void handlingUITouchGesture(MotionEvent motionEvent) {
-        // get pointer index from the event object
-        int pointerIndex = motionEvent.getActionIndex();
-
-        // get pointer ID
-        //hdz add void to crash from google log
-        if (pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
-            return;
-
-        for (int size = motionEvent.getPointerCount(), i = 0; i < size; i++) {
-            castMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i), motionEvent.getY(i));
+        switch (castMgr.getType()) {
+            case CASTER:
+            case RECEIVER:
+                for (int size = motionEvent.getPointerCount(), i = 0; i < size; i++) {
+                    castMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i), motionEvent.getY(i));
+                }
+                break;
+            case NONE:
+                handlingGestureTouch(motionEvent);
+                break;
         }
+    }
 
+    private void handlingGestureTouch(MotionEvent motionEvent) {
         float x = motionEvent.getX();
         float y = motionEvent.getY();
         //handle touch gesture
@@ -175,7 +181,7 @@ public class Wrapper implements WrapperCallback {
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (castMgr.getType() == CastMgr.CAST_TYPE.NONE && gesturePhase == GESTURE_PHASE.PHASE4) {
+                if (gesturePhase == GESTURE_PHASE.PHASE4) {
                     try {
                         if (isConfiguring) {
                             isConfiguring = !isConfiguring;
@@ -185,7 +191,7 @@ public class Wrapper implements WrapperCallback {
                             wrapperLayout.setVisibility(LinearLayout.VISIBLE);
                         }
                         gesturePhase = GESTURE_PHASE.NONE;
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         Log.e(TAG, e.toString());
                     }
                 }

@@ -62,6 +62,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
+        // get pointer index from the event object
+        int pointerIndex = motionEvent.getActionIndex();
+
+        // get pointer ID
+        //hdz add void to crash from google log
+        if (pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
+            return false;
         wrapper.handlingUITouchGesture(motionEvent);
         return false;
     }
