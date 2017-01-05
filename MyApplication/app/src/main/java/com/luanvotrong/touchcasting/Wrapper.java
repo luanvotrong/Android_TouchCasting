@@ -6,7 +6,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -54,8 +53,10 @@ public class Wrapper implements WrapperCallback {
 
     private GESTURE_PHASE gesturePhase;
 
-    public void initUI(Activity mainActivity, DrawingView drawingView) {
+    public void initUI(Activity mainActivity, DrawingView drawingView, LinearLayout linearLayout) {
         this.mainAcitivity = mainActivity;
+        this.drawingView = drawingView;
+        this.mainLayout = linearLayout;
 
         isConfiguring = false;
         gesturePhase = GESTURE_PHASE.NONE;
@@ -63,7 +64,6 @@ public class Wrapper implements WrapperCallback {
         screenW = display.widthPixels;
         screenH = display.heightPixels;
 
-        this.drawingView = drawingView;
 
         connectMgr = MyApplication.getConnectMgr();
         castMgr = MyApplication.getCastMgr();
@@ -73,7 +73,6 @@ public class Wrapper implements WrapperCallback {
         scrollView = new ScrollView(mainAcitivity);
         wrapperLayout = new LinearLayout(mainAcitivity);
         wrapperLayout.setOrientation(LinearLayout.VERTICAL);
-        mainLayout = (LinearLayout) mainAcitivity.findViewById(R.id.linear_layout);
 
         scrollView.addView(wrapperLayout);
         mainLayout.addView(drawingView);

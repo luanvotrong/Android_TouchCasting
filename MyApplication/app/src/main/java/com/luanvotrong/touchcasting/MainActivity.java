@@ -23,10 +23,6 @@ public class MainActivity extends AppCompatActivity {
     private Wrapper wrapper;
     private DrawingView drawingView;
 
-    public DrawingView getDrawingView() {
-        return drawingView;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         drawingView.setVisibility(View.GONE);
 
         wrapper = MyApplication.getUIWrapper();
-        wrapper.initUI(this, drawingView);
+        wrapper.initUI(this, drawingView, (LinearLayout) findViewById(R.id.linear_layout));
     }
 
     @Override
