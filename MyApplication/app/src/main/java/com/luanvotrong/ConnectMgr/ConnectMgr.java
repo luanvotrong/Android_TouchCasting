@@ -1,8 +1,10 @@
 package com.luanvotrong.ConnectMgr;
 
 import android.content.AbstractThreadedSyncAdapter;
+import android.os.SystemClock;
 import android.util.Log;
 
+import com.luanvotrong.Utilities.Define;
 import com.luanvotrong.Utilities.HostInfo;
 import com.luanvotrong.touchcasting.MyApplication;
 import com.luanvotrong.touchcasting.WrapperCallback;
@@ -120,19 +122,18 @@ public class ConnectMgr implements FinderCallback {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 long dt = System.currentTimeMillis() - last;
-                if (dt > 1000) {
-                    for (int i = 0, size = listBeacon.size(); i < size; i++) {
-                        HostInfo info = listBeacon.get(i);
-                        info.update(dt / 1000);
-                        if(info.isTimeout()) {
-                            listBeacon.remove(i);
-                            i--;
-                            size = listBeacon.size();
-                            MyApplication.getUIWrapper().onUpdateServerList();
-                        }
+                for (int i = 0, size = listBeacon.size(); i < size; i++) {
+                    HostInfo info = listBeacon.get(i);
+                    info.update(dt / 1000);
+                    if (info.isTimeout()) {
+                        listBeacon.remove(i);
+                        i--;
+                        size = listBeacon.size();
+                        MyApplication.getUIWrapper().onUpdateServerList();
                     }
-                    last += dt;
                 }
+                last += dt;
+                SystemClock.sleep(1000);
             }
         }
     }

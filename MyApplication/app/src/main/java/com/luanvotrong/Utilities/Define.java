@@ -10,4 +10,5 @@ public class Define {
 
     public static String SERVICE_NAME = "Touch casting";
     public static int INTERVAL_SHOUTING = 2000;
+    public static int INTERVAL_TIMEOUT = 4000;
 }
