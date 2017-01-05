@@ -37,10 +37,10 @@ public class ConnectMgr implements FinderCallback {
                 beacon.start();
                 break;
             case SHOUTER:
-                stopFinder();
-                beacon.start();
                 break;
             case FINDER:
+                stopFinder();
+                beacon.start();
                 break;
         }
 
