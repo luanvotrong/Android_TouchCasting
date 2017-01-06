@@ -13,38 +13,9 @@
     <!-- This FrameLayout insets its children based on system windows using
          android:fitsSystemWindows. -->
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <Button
-            android:text="Client"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Client"
-            android:layout_weight="1"
-            android:visibility="visible"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_alignParentRight="true" />
-
-        <Button
-            android:text="Server"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/Server"
-            android:layout_weight="1"
-            style="@style/Widget.AppCompat.Button"
-            android:visibility="visible"
-            android:elevation="0dp"
-            android:layout_alignParentRight="false"
-            android:layout_alignParentEnd="false" />
-    </RelativeLayout>
-
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </LinearLayout>
-
+        android:layout_height="match_parent"
+        android:id="@+id/linear_layout"></LinearLayout>
 </FrameLayout>
