@@ -22,7 +22,7 @@ public class HostInfo {
     }
 
     public void resetCountdown() {
-        countdown = System.currentTimeMillis();
+        countdown = Define.INTERVAL_TIMEOUT;
     }
 
     public void setInetAddress(InetAddress inetAddress) {

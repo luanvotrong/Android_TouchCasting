@@ -94,15 +94,16 @@ public class Receiver {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
+                String touch = null;
                 synchronized (mTouches) {
                     if (mTouches.size() > 0) {
-                        String touch = mTouches.get(mTouches.size() - 1);
-                        if (touch != null) {
-                            Log.d(TAG, touch);
-                            injectSingleTouch(new Touch(touch));
-                        }
+                        touch = mTouches.get(mTouches.size() - 1);
                         mTouches.remove(mTouches.size() - 1);
                     }
+                }
+                if (touch != null) {
+                    Log.d(TAG, touch);
+                    injectSingleTouch(new Touch(touch));
                 }
             }
         }
