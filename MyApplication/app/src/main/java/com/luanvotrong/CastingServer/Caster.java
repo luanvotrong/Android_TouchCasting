@@ -26,7 +26,7 @@ public class Caster {
     public void start(Socket socket) {
         touchesPool.Clear();
         try {
-            socket.setTcpNoDelay(true);
+            //socket.setTcpNoDelay(true);
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
