@@ -32,6 +32,12 @@ public class CasterMgr {
                     Caster caster = new Caster();
                     caster.start(socket);
                     casters.add(caster);
+                    MyApplication.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(MyApplication.getActivity(), casters.size() + " casters", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } catch (Exception e) {
                     Log.d(TAG, e.toString());
                 }

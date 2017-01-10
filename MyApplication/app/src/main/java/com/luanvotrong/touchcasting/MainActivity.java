@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         drawingView.setEnabled(false);
         drawingView.setVisibility(View.GONE);
 
+        MyApplication.setActivity(this);
         wrapper = MyApplication.getUIWrapper();
         wrapper.initUI(this, drawingView, (LinearLayout) findViewById(R.id.linear_layout));
     }
