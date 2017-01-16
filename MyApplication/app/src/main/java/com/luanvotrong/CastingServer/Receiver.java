@@ -9,32 +9,28 @@ import com.luanvotrong.Utilities.Define;
 import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.touchcasting.MyApplication;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
 public class Receiver {
-    private int m_tcpPort = 63679;
     private String TAG = "Lulu Receiver";
-    private String m_serviceName = "TouchCasting";
     private CastMgr castMgr;
     private Thread receiverThread;
     private Thread touchInjectThread;
     private Socket socket;
+    private DataInputStream dataInputStream;
     private ArrayList<String> mTouches;
     private float mScreenW;
     private float mScreenH;
     private Activity activity;
 
-    public ArrayList<String> getTouches() {
-        return mTouches;
-    }
-
     public void start(InetAddress inetAddress) {
         try {
             socket = new Socket(inetAddress, Define.PORT_CASTING_UDP);
-            socket.setTcpNoDelay(true);
+            dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
@@ -74,8 +70,7 @@ public class Receiver {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    DataInputStream dis = new DataInputStream(socket.getInputStream());
-                    String mess = dis.readUTF();
+                    String mess = dataInputStream.readUTF();
                     String[] infos = mess.split(":");
                     synchronized (mTouches) {
                         mTouches.add(mess);
