@@ -10,6 +10,8 @@ import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.touchcasting.MyApplication;
 
 import java.io.DataInputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -21,20 +23,15 @@ public class Receiver {
     private CastMgr castMgr;
     private Thread receiverThread;
     private Thread touchInjectThread;
-    private Socket socket;
+    private DatagramSocket datagramSocket;
     private ArrayList<String> mTouches;
     private float mScreenW;
     private float mScreenH;
     private Activity activity;
 
-    public ArrayList<String> getTouches() {
-        return mTouches;
-    }
-
     public void start(InetAddress inetAddress) {
         try {
-            socket = new Socket(inetAddress, Define.PORT_CASTING_UDP);
-            socket.setTcpNoDelay(true);
+            datagramSocket = new DatagramSocket(Define.PORT_CASTING_UDP, inetAddress);
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
@@ -72,18 +69,17 @@ public class Receiver {
     private class ReceiverWorker implements Runnable {
         @Override
         public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    DataInputStream dis = new DataInputStream(socket.getInputStream());
-                    String mess = dis.readUTF();
-                    String[] infos = mess.split(":");
-                    synchronized (mTouches) {
-                        mTouches.add(mess);
-                        Log.d(TAG, mess);
-                    }
-                } catch (Exception e) {
-                    Log.d(TAG, e.toString());
+            byte[] message = new byte[1500];
+            DatagramPacket p = new DatagramPacket(message, message.length);
+            try {
+                datagramSocket.receive(p);
+                String mess = new String(message, 0, p.getLength());
+                synchronized (mTouches) {
+                    mTouches.add(mess);
+                    Log.d(TAG, mess);
                 }
+            } catch (Exception e) {
+                Log.d(TAG, e.toString());
             }
         }
     }

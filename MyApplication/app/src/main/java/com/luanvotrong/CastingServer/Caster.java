@@ -1,7 +1,6 @@
 package com.luanvotrong.CastingServer;
 
 
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.luanvotrong.Utilities.Touch;
@@ -25,11 +24,6 @@ public class Caster {
 
     public void start(Socket socket) {
         touchesPool.Clear();
-        try {
-            //socket.setTcpNoDelay(true);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-        }
         this.socket = socket;
         mScreenW = MyApplication.getCastMgr().getScreenW();
         mScreenH = MyApplication.getCastMgr().getScreenH();
@@ -64,25 +58,6 @@ public class Caster {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-/*
-                try {
-                    synchronized (touchesPool) {
-                        Touch touch = touchesPool.GetTouch();
-                        //Send instruction;
-                        float pX = touch.m_x / mScreenW;
-                        float pY = touch.m_y / mScreenH;
-                        String mess = touch.m_id + ":" + pX + ":" + pY + ":" + touch.m_type;
-                        try {
-                            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                            dos.writeUTF(mess);
-                        } catch (Exception e) {
-                            Log.e(TAG, e.toString());
-                        }
-                    }
-                } catch (Exception e) {
-
-                }
-                */
                 synchronized (touchesPool) {
                     if (touchesPool.GetSize() > 0) {
                         Touch touch = touchesPool.GetTouch();
