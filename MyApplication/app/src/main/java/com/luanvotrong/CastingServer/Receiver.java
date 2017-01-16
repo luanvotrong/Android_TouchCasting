@@ -5,10 +5,12 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.luanvotrong.Utilities.Define;
 import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.touchcasting.MyApplication;
 
 import java.io.DataInputStream;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -19,7 +21,7 @@ public class Receiver {
     private CastMgr castMgr;
     private Thread receiverThread;
     private Thread touchInjectThread;
-    private Socket m_socket;
+    private Socket socket;
     private ArrayList<String> mTouches;
     private float mScreenW;
     private float mScreenH;
@@ -29,7 +31,14 @@ public class Receiver {
         return mTouches;
     }
 
-    public void start() {
+    public void start(InetAddress inetAddress) {
+        try {
+            socket = new Socket(inetAddress, Define.PORT_CASTING_UDP);
+            socket.setTcpNoDelay(true);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+
         castMgr = MyApplication.getCastMgr();
         activity = castMgr.getMainActivity();
         mTouches = new ArrayList<String>();
@@ -65,7 +74,7 @@ public class Receiver {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    DataInputStream dis = new DataInputStream(m_socket.getInputStream());
+                    DataInputStream dis = new DataInputStream(socket.getInputStream());
                     String mess = dis.readUTF();
                     String[] infos = mess.split(":");
                     synchronized (mTouches) {
@@ -85,15 +94,16 @@ public class Receiver {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
+                String touch = null;
                 synchronized (mTouches) {
                     if (mTouches.size() > 0) {
-                        String touch = mTouches.get(mTouches.size() - 1);
-                        if (touch != null) {
-                            Log.d(TAG, touch);
-                            injectSingleTouch(new Touch(touch));
-                        }
+                        touch = mTouches.get(mTouches.size() - 1);
                         mTouches.remove(mTouches.size() - 1);
                     }
+                }
+                if (touch != null) {
+                    Log.d(TAG, touch);
+                    injectSingleTouch(new Touch(touch));
                 }
             }
         }

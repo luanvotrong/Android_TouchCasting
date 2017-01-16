@@ -9,5 +9,6 @@ public class Define {
     public static int PORT_CASTING_UDP = 63678;
 
     public static String SERVICE_NAME = "Touch casting";
-    public static int INTERVAL_SHOUTING = 1000;
+    public static int INTERVAL_SHOUTING = 2000;
+    public static int INTERVAL_TIMEOUT = 4000;
 }

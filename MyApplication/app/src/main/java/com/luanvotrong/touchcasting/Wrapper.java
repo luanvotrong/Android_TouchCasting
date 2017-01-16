@@ -1,24 +1,29 @@
 package com.luanvotrong.touchcasting;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import com.luanvotrong.CastingServer.CastMgr;
 import com.luanvotrong.ConnectMgr.ConnectMgr;
-import com.luanvotrong.Utilities.Define;
-import com.luanvotrong.Utilities.Utilities;
+import com.luanvotrong.Utilities.HostInfo;
+
+import java.net.InetAddress;
+import java.util.ArrayList;
 
 /**
  * Created by luan.votrong on 12/26/2016.
  */
 
 public class Wrapper implements WrapperCallback {
+    private String TAG = "Lulu Lib Wrapper";
+
     private Activity mainAcitivity;
 
     private LinearLayout mainLayout;
@@ -31,6 +36,8 @@ public class Wrapper implements WrapperCallback {
 
     private Button mBtnServer;
     private Button mBtnClient;
+    private Button mBtnCancel;
+    private ArrayList<Button> mBtnServers;
     private boolean isConfiguring;
 
     private float screenW;
@@ -46,8 +53,10 @@ public class Wrapper implements WrapperCallback {
 
     private GESTURE_PHASE gesturePhase;
 
-    public void initUI(Activity mainActivity) {
+    public void initUI(Activity mainActivity, DrawingView drawingView, LinearLayout linearLayout) {
         this.mainAcitivity = mainActivity;
+        this.drawingView = drawingView;
+        this.mainLayout = linearLayout;
 
         isConfiguring = false;
         gesturePhase = GESTURE_PHASE.NONE;
@@ -55,9 +64,6 @@ public class Wrapper implements WrapperCallback {
         screenW = display.widthPixels;
         screenH = display.heightPixels;
 
-        drawingView = new DrawingView(mainAcitivity);
-        drawingView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
-        drawingView.setEnabled(false);
 
         connectMgr = MyApplication.getConnectMgr();
         castMgr = MyApplication.getCastMgr();
@@ -67,9 +73,13 @@ public class Wrapper implements WrapperCallback {
         scrollView = new ScrollView(mainAcitivity);
         wrapperLayout = new LinearLayout(mainAcitivity);
         wrapperLayout.setOrientation(LinearLayout.VERTICAL);
-        mainLayout = (LinearLayout) mainAcitivity.findViewById(R.id.linear_layout);
 
         scrollView.addView(wrapperLayout);
+        try {
+            mainLayout.addView(drawingView);
+        } catch (Exception e) {
+            Log.d(TAG, e.toString());
+        }
         mainLayout.addView(scrollView);
 
         mBtnServer = new Button(mainAcitivity);
@@ -89,7 +99,6 @@ public class Wrapper implements WrapperCallback {
                         castMgr.startCaster();
                         break;
                 }
-                disableUI();
             }
         });
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -103,24 +112,22 @@ public class Wrapper implements WrapperCallback {
             @Override
             public void onClick(View v) {
                 connectMgr.startFinder();
-                disableUI();
             }
         });
         wrapperLayout.addView(mBtnClient, params);
 
-        for (int i = 0; i < 20; i++) {
-            Button button = new Button(mainAcitivity);
-            button.setText("server " + i + " " + Utilities.getDeviceName());
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    disableUI();
-                }
-            });
-            wrapperLayout.addView(button);
-        }
-
+        mBtnCancel = new Button(mainAcitivity);
+        mBtnCancel.setText("Cancel");
+        mBtnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                disableUI();
+            }
+        });
+        wrapperLayout.addView(mBtnCancel, params);
         wrapperLayout.setVisibility(LinearLayout.GONE);
+
+        mBtnServers = new ArrayList<>();
     }
 
     public void disableUI() {
@@ -128,18 +135,20 @@ public class Wrapper implements WrapperCallback {
     }
 
     public void handlingUITouchGesture(MotionEvent motionEvent) {
-        // get pointer index from the event object
-        int pointerIndex = motionEvent.getActionIndex();
-
-        // get pointer ID
-        //hdz add void to crash from google log
-        if (pointerIndex < 0 || pointerIndex >= motionEvent.getPointerCount())
-            return;
-
-        for (int size = motionEvent.getPointerCount(), i = 0; i < size; i++) {
-            castMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i), motionEvent.getY(i));
+        switch (castMgr.getType()) {
+            case CASTER:
+            case RECEIVER:
+                for (int size = motionEvent.getPointerCount(), i = 0; i < size; i++) {
+                    castMgr.onTouchEvent(motionEvent.getPointerId(i), motionEvent.getActionMasked(), motionEvent.getX(i), motionEvent.getY(i));
+                }
+                break;
+            case NONE:
+                handlingGestureTouch(motionEvent);
+                break;
         }
+    }
 
+    private void handlingGestureTouch(MotionEvent motionEvent) {
         float x = motionEvent.getX();
         float y = motionEvent.getY();
         //handle touch gesture
@@ -173,20 +182,63 @@ public class Wrapper implements WrapperCallback {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (gesturePhase == GESTURE_PHASE.PHASE4) {
-                    if (isConfiguring) {
-                        isConfiguring = !isConfiguring;
-                        wrapperLayout.setVisibility(LinearLayout.GONE);
-                    } else {
-                        isConfiguring = !isConfiguring;
-                        wrapperLayout.setVisibility(LinearLayout.VISIBLE);
+                    try {
+                        if (isConfiguring) {
+                            isConfiguring = !isConfiguring;
+                            wrapperLayout.setVisibility(LinearLayout.GONE);
+                        } else {
+                            isConfiguring = !isConfiguring;
+                            wrapperLayout.setVisibility(LinearLayout.VISIBLE);
+                        }
+                        gesturePhase = GESTURE_PHASE.NONE;
+                    } catch (Exception e) {
+                        Log.e(TAG, e.toString());
                     }
                 }
                 break;
         }
     }
 
+    private class StartReceiver extends AsyncTask<InetAddress, Void, Void> {
+        @Override
+        protected Void doInBackground(InetAddress... params) {
+            MyApplication.getCastMgr().startReceiver(params[0]);
+            return null;
+        }
+    }
+
     @Override
     public void onUpdateServerList() {
-        //Todo: update server list
+
+        mBtnServers.clear();
+
+        ArrayList<HostInfo> hostInfos = MyApplication.getConnectMgr().getListBeacon();
+        for (int i = 0, size = hostInfos.size(); i < size; i++) {
+            final HostInfo hostInfo = hostInfos.get(i);
+            Button btn = new Button(mainAcitivity);
+            btn.setTag("Btn");
+            btn.setText(hostInfo.getName());
+            btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new StartReceiver().execute(hostInfo.getInetAddress());
+                    drawingView.setVisibility(View.VISIBLE);
+                    disableUI();
+                }
+            });
+            mBtnServers.add(btn);
+            mainAcitivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    wrapperLayout.removeAllViews();
+                    wrapperLayout.addView(mBtnServer);
+                    wrapperLayout.addView(mBtnClient);
+                    wrapperLayout.addView(mBtnCancel);
+                    for (int j = 0, size = mBtnServers.size(); j < size; j++) {
+                        wrapperLayout.addView(mBtnServers.get(j));
+                    }
+                }
+            });
+        }
     }
 }

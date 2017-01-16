@@ -14,13 +14,17 @@ public class TouchesPool {
         touches.add(new Touch(id, x, y, type));
     }
 
-    public Touch GetTouch() throws Exception {
+    public Touch GetTouch() {
         try {
             Touch res = touches.get(touches.size() - 1);
             touches.remove(touches.size() - 1);
             return res;
         } catch (Exception e) {
-            throw new Exception();
+            throw e;
         }
+    }
+
+    public int GetSize() {
+        return touches.size();
     }
 }
