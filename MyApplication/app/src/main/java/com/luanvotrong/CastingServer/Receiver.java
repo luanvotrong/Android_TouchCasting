@@ -19,10 +19,8 @@ public class Receiver {
     private String TAG = "Lulu Receiver";
     private CastMgr castMgr;
     private Thread receiverThread;
-    private Thread touchInjectThread;
     private Socket socket;
     private DataInputStream dataInputStream;
-    private ArrayList<String> mTouches;
     private float mScreenW;
     private float mScreenH;
     private Activity activity;
@@ -37,15 +35,11 @@ public class Receiver {
 
         castMgr = MyApplication.getCastMgr();
         activity = castMgr.getMainActivity();
-        mTouches = new ArrayList<String>();
         mScreenW = MyApplication.getCastMgr().getScreenW();
         mScreenH = MyApplication.getCastMgr().getScreenH();
 
         receiverThread = new Thread(new ReceiverWorker());
         receiverThread.start();
-
-        touchInjectThread = new Thread(new TouchesInjector());
-        touchInjectThread.start();
     }
 
     public void stop() {
@@ -56,13 +50,6 @@ public class Receiver {
             Log.e(TAG, e.toString());
             receiverThread = null;
         }
-        try {
-            touchInjectThread.interrupt();
-            touchInjectThread = null;
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-            touchInjectThread = null;
-        }
     }
 
     private class ReceiverWorker implements Runnable {
@@ -71,34 +58,10 @@ public class Receiver {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     String mess = dataInputStream.readUTF();
-                    String[] infos = mess.split(":");
-                    synchronized (mTouches) {
-                        mTouches.add(mess);
-                        Log.d(TAG, mess);
-                    }
+                    injectSingleTouch(new Touch(mess));
+                    Log.d(TAG, mess);
                 } catch (Exception e) {
                     Log.d(TAG, e.toString());
-                }
-            }
-        }
-    }
-
-    private class TouchesInjector implements Runnable {
-        private String TAG = "Lulu TouchesInjector";
-
-        @Override
-        public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
-                String touch = null;
-                synchronized (mTouches) {
-                    if (mTouches.size() > 0) {
-                        touch = mTouches.get(mTouches.size() - 1);
-                        mTouches.remove(mTouches.size() - 1);
-                    }
-                }
-                if (touch != null) {
-                    Log.d(TAG, touch);
-                    injectSingleTouch(new Touch(touch));
                 }
             }
         }

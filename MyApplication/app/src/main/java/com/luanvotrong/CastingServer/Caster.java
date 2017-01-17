@@ -17,6 +17,7 @@ public class Caster {
     private float mScreenW;
     private float mScreenH;
     private Socket socket;
+    private BufferedOutputStream bufferedOutputStream;
     private DataOutputStream dataOutputStream;
     private Thread castingWorker;
 
@@ -28,7 +29,8 @@ public class Caster {
         touchesPool.Clear();
         this.socket = socket;
         try {
-            dataOutputStream = new DataOutputStream(new BufferedOutputStream(this.socket.getOutputStream()));
+            bufferedOutputStream = new BufferedOutputStream(this.socket.getOutputStream());
+            dataOutputStream = new DataOutputStream(bufferedOutputStream);
         } catch(Exception e) {
             Log.e(TAG, e.toString());
         }
@@ -60,6 +62,7 @@ public class Caster {
         }
     }
 
+    private int count = 0;
     private class CastingWorker implements Runnable {
 
         @Override
@@ -71,9 +74,11 @@ public class Caster {
                         //Send instruction;
                         double pX = touch.m_x / mScreenW;
                         double pY = touch.m_y / mScreenH;
-                        String mess = touch.m_id + ":" + pX + ":" + pY + ":" + touch.m_type;
+                        String mess = touch.m_id + ":" + pX + ":" + pY + ":" + touch.m_type + ":" + count;
+                        count++;
                         try {
                             dataOutputStream.writeUTF(mess);
+                            bufferedOutputStream.flush();
                             dataOutputStream.flush();
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
