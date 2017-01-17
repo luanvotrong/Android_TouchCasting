@@ -12,7 +12,6 @@ public class Touch {
     public int m_id;
     public float m_x, m_y;
     public int m_type;
-    public int count;
 
     public Touch(int id, float x, float y, int type) {
         m_id = id;
@@ -27,7 +26,5 @@ public class Touch {
         m_x = Float.parseFloat(infos[1]);
         m_y = Float.parseFloat(infos[2]);
         m_type = Integer.parseInt(infos[3]);
-        count = Integer.parseInt(infos[4]);
-        Log.e(TAG, "count " + count);
     }
 }

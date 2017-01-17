@@ -28,7 +28,7 @@ public class Receiver {
     public void start(InetAddress inetAddress) {
         try {
             socket = new Socket(inetAddress, Define.PORT_CASTING_UDP);
-            dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+            dataInputStream = new DataInputStream((socket.getInputStream()));
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
