@@ -23,6 +23,7 @@ public class Receiver {
     private Thread receiverThread;
     private Socket socket;
     private DatagramSocket datagramSocket;
+    private DatagramPacket datagramPacket;
     private float mScreenW;
     private float mScreenH;
     private Activity activity;
@@ -31,6 +32,7 @@ public class Receiver {
         try {
             socket = new Socket(inetAddress, Define.PORT_CASTING_TCP);
             datagramSocket = new DatagramSocket(Define.PORT_CASTING_UDP);
+            datagramPacket = new DatagramPacket("".getBytes(), 0);
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
@@ -61,9 +63,9 @@ public class Receiver {
                 try {
                     //TODO: implement UDP receiving
                     byte[] message = new byte[1500];
-                    DatagramPacket p = new DatagramPacket(message, message.length);
-                    datagramSocket.receive(p);
-                    String mess = new String(message, 0, p.getLength());
+                    datagramPacket.setData(message, 0,message.length);
+                    datagramSocket.receive(datagramPacket);
+                    String mess = new String(message, 0, datagramPacket.getLength());
                     injectSingleTouch(new Touch(mess));
                     Log.d(TAG, mess);
                 } catch (Exception e) {

@@ -22,6 +22,7 @@ public class Caster {
     private float mScreenH;
     private InetAddress inetAddress;
     private DatagramSocket datagramSocket;
+    private DatagramPacket datagramPacket;
     private Thread castingWorker;
 
     public Caster() {
@@ -34,6 +35,7 @@ public class Caster {
             inetAddress = socket.getInetAddress();
             datagramSocket = new DatagramSocket(Define.PORT_CASTING_UDP);
             datagramSocket.setSendBufferSize(20000);
+            datagramPacket = new DatagramPacket("".getBytes(), 0, 0, inetAddress, Define.PORT_CASTING_UDP);
         } catch(Exception e) {
             Log.e(TAG, e.toString());
         }
@@ -71,17 +73,17 @@ public class Caster {
                         Touch touch = touchesPool.GetTouch();
                         //Send instruction;
                         double pX = touch.m_x / mScreenW;
-                        //pX = Math.round(pX * 10000.0) / 10000.0;
+                        pX = Math.round(pX * 10000.0) / 10000.0;
                         double pY = touch.m_y / mScreenH;
-                        //pY = Math.round(pY * 10000.0) / 10000.0;
+                        pY = Math.round(pY * 10000.0) / 10000.0;
                         String mess = touch.m_id + ":" + pX + ":" + pY + ":" + touch.m_type;
                         byte[] b = mess.getBytes();
                         Log.e(TAG, "size " + b.length);
                         try {
                             int msg_length = mess.length();
                             byte[] message = mess.getBytes();
-                            DatagramPacket p = new DatagramPacket(message, msg_length, inetAddress, Define.PORT_CASTING_UDP);
-                            datagramSocket.send(p);
+                            datagramPacket.setData(message, 0, msg_length);
+                            datagramSocket.send(datagramPacket);
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
                         }
