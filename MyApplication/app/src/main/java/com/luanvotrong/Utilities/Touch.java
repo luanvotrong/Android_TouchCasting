@@ -1,10 +1,14 @@
 package com.luanvotrong.Utilities;
 
+import android.util.Log;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class Touch {
+    private String TAG = "Lulu Touch";
+
     public int m_id;
     public float m_x, m_y;
     public int m_type;

@@ -9,6 +9,7 @@ import com.luanvotrong.Utilities.Define;
 import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.touchcasting.MyApplication;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -17,36 +18,32 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Receiver {
-    private int m_tcpPort = 63679;
     private String TAG = "Lulu Receiver";
-    private String m_serviceName = "TouchCasting";
     private CastMgr castMgr;
     private Thread receiverThread;
-    private Thread touchInjectThread;
-    private DatagramSocket datagramSocket;
-    private ArrayList<String> mTouches;
+
+    private Socket socket;
+    private DataInputStream dataInputStream;
+
     private float mScreenW;
     private float mScreenH;
     private Activity activity;
 
     public void start(InetAddress inetAddress) {
         try {
-            datagramSocket = new DatagramSocket(Define.PORT_CASTING_UDP, inetAddress);
+            socket = new Socket(inetAddress, Define.PORT_CASTING_UDP);
+            dataInputStream = new DataInputStream((socket.getInputStream()));
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
 
         castMgr = MyApplication.getCastMgr();
         activity = castMgr.getMainActivity();
-        mTouches = new ArrayList<String>();
         mScreenW = MyApplication.getCastMgr().getScreenW();
         mScreenH = MyApplication.getCastMgr().getScreenH();
 
         receiverThread = new Thread(new ReceiverWorker());
         receiverThread.start();
-
-        touchInjectThread = new Thread(new TouchesInjector());
-        touchInjectThread.start();
     }
 
     public void stop() {
@@ -57,49 +54,18 @@ public class Receiver {
             Log.e(TAG, e.toString());
             receiverThread = null;
         }
-        try {
-            touchInjectThread.interrupt();
-            touchInjectThread = null;
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-            touchInjectThread = null;
-        }
     }
 
     private class ReceiverWorker implements Runnable {
         @Override
         public void run() {
-            byte[] message = new byte[1500];
-            DatagramPacket p = new DatagramPacket(message, message.length);
-            try {
-                datagramSocket.receive(p);
-                String mess = new String(message, 0, p.getLength());
-                synchronized (mTouches) {
-                    mTouches.add(mess);
-                    Log.d(TAG, mess);
-                }
-            } catch (Exception e) {
-                Log.d(TAG, e.toString());
-            }
-        }
-    }
-
-    private class TouchesInjector implements Runnable {
-        private String TAG = "Lulu TouchesInjector";
-
-        @Override
-        public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-                String touch = null;
-                synchronized (mTouches) {
-                    if (mTouches.size() > 0) {
-                        touch = mTouches.get(mTouches.size() - 1);
-                        mTouches.remove(mTouches.size() - 1);
-                    }
-                }
-                if (touch != null) {
-                    Log.d(TAG, touch);
-                    injectSingleTouch(new Touch(touch));
+                try {
+                    String mess = dataInputStream.readUTF();
+                    injectSingleTouch(new Touch(mess));
+                    Log.d(TAG, mess);
+                } catch (Exception e) {
+                    Log.d(TAG, e.toString());
                 }
             }
         }

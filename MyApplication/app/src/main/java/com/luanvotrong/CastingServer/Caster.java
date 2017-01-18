@@ -7,6 +7,7 @@ import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.Utilities.TouchesPool;
 import com.luanvotrong.touchcasting.MyApplication;
 
+import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
@@ -16,6 +17,7 @@ public class Caster {
     private float mScreenW;
     private float mScreenH;
     private Socket socket;
+    private DataOutputStream dataOutputStream;
     private Thread castingWorker;
 
     public Caster() {
@@ -25,6 +27,11 @@ public class Caster {
     public void start(Socket socket) {
         touchesPool.Clear();
         this.socket = socket;
+        try {
+            dataOutputStream = new DataOutputStream((this.socket.getOutputStream()));
+        } catch(Exception e) {
+            Log.e(TAG, e.toString());
+        }
         mScreenW = MyApplication.getCastMgr().getScreenW();
         mScreenH = MyApplication.getCastMgr().getScreenH();
         castingWorker = new Thread(new CastingWorker());
@@ -53,6 +60,7 @@ public class Caster {
         }
     }
 
+    private int count = 0;
     private class CastingWorker implements Runnable {
 
         @Override
@@ -66,8 +74,8 @@ public class Caster {
                         double pY = touch.m_y / mScreenH;
                         String mess = touch.m_id + ":" + pX + ":" + pY + ":" + touch.m_type;
                         try {
-                            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                            dos.writeUTF(mess);
+                            dataOutputStream.writeUTF(mess);
+                            dataOutputStream.flush();
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
                         }
