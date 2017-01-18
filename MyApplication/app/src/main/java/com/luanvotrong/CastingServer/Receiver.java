@@ -21,18 +21,16 @@ public class Receiver {
     private String TAG = "Lulu Receiver";
     private CastMgr castMgr;
     private Thread receiverThread;
-
     private Socket socket;
-    private DataInputStream dataInputStream;
-
+    private DatagramSocket datagramSocket;
     private float mScreenW;
     private float mScreenH;
     private Activity activity;
 
     public void start(InetAddress inetAddress) {
         try {
-            socket = new Socket(inetAddress, Define.PORT_CASTING_UDP);
-            dataInputStream = new DataInputStream((socket.getInputStream()));
+            socket = new Socket(inetAddress, Define.PORT_CASTING_TCP);
+            datagramSocket = new DatagramSocket(Define.PORT_CASTING_UDP);
         } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
@@ -61,7 +59,11 @@ public class Receiver {
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    String mess = dataInputStream.readUTF();
+                    //TODO: implement UDP receiving
+                    byte[] message = new byte[1500];
+                    DatagramPacket p = new DatagramPacket(message, message.length);
+                    datagramSocket.receive(p);
+                    String mess = new String(message, 0, p.getLength());
                     injectSingleTouch(new Touch(mess));
                     Log.d(TAG, mess);
                 } catch (Exception e) {

@@ -3,12 +3,16 @@ package com.luanvotrong.CastingServer;
 
 import android.util.Log;
 
+import com.luanvotrong.Utilities.Define;
 import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.Utilities.TouchesPool;
 import com.luanvotrong.touchcasting.MyApplication;
 
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class Caster {
@@ -16,8 +20,8 @@ public class Caster {
     private TouchesPool touchesPool;
     private float mScreenW;
     private float mScreenH;
-    private Socket socket;
-    private DataOutputStream dataOutputStream;
+    private InetAddress inetAddress;
+    private DatagramSocket datagramSocket;
     private Thread castingWorker;
 
     public Caster() {
@@ -26,17 +30,11 @@ public class Caster {
 
     public void start(Socket socket) {
         touchesPool.Clear();
-        this.socket = socket;
         try {
-            this.socket.setTcpNoDelay(true);
-            this.socket.setSendBufferSize(50000);
-            Log.e(TAG, "tcp size " + this.socket.getSendBufferSize());
+            inetAddress = socket.getInetAddress();
+            datagramSocket = new DatagramSocket(Define.PORT_CASTING_UDP);
+            datagramSocket.setSendBufferSize(20000);
         } catch(Exception e) {
-            Log.e(TAG, e.toString());
-        }
-        try {
-            dataOutputStream = new DataOutputStream((this.socket.getOutputStream()));
-        } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
 
@@ -53,12 +51,6 @@ public class Caster {
         } catch (Exception e) {
             Log.e(TAG, e.toString());
             castingWorker = null;
-        }
-        try {
-            socket.close();
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-            socket = null;
         }
     }
 
@@ -79,15 +71,17 @@ public class Caster {
                         Touch touch = touchesPool.GetTouch();
                         //Send instruction;
                         double pX = touch.m_x / mScreenW;
-                        pX = Math.round(pX * 10000.0) / 10000.0;
+                        //pX = Math.round(pX * 10000.0) / 10000.0;
                         double pY = touch.m_y / mScreenH;
-                        pY = Math.round(pY * 10000.0) / 10000.0;
+                        //pY = Math.round(pY * 10000.0) / 10000.0;
                         String mess = touch.m_id + ":" + pX + ":" + pY + ":" + touch.m_type;
                         byte[] b = mess.getBytes();
                         Log.e(TAG, "size " + b.length);
                         try {
-                            dataOutputStream.writeUTF(mess);
-                            dataOutputStream.flush();
+                            int msg_length = mess.length();
+                            byte[] message = mess.getBytes();
+                            DatagramPacket p = new DatagramPacket(message, msg_length, inetAddress, Define.PORT_CASTING_UDP);
+                            datagramSocket.send(p);
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
                         }

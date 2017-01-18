@@ -51,7 +51,7 @@ public class CasterMgr {
 
     public void start() {
         try {
-            serverSocket = new ServerSocket(Define.PORT_CASTING_UDP);
+            serverSocket = new ServerSocket(Define.PORT_CASTING_TCP);
             mServerSocketThread = new Thread(new ServerSocketWorker());
             mServerSocketThread.start();
         } catch (Exception e) {
