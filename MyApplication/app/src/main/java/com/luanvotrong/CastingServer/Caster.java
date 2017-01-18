@@ -28,10 +28,18 @@ public class Caster {
         touchesPool.Clear();
         this.socket = socket;
         try {
-            dataOutputStream = new DataOutputStream((this.socket.getOutputStream()));
+            this.socket.setTcpNoDelay(true);
+            this.socket.setSendBufferSize(50000);
+            Log.e(TAG, "tcp size " + this.socket.getSendBufferSize());
         } catch(Exception e) {
             Log.e(TAG, e.toString());
         }
+        try {
+            dataOutputStream = new DataOutputStream((this.socket.getOutputStream()));
+        } catch (Exception e) {
+            Log.e(TAG, e.toString());
+        }
+
         mScreenW = MyApplication.getCastMgr().getScreenW();
         mScreenH = MyApplication.getCastMgr().getScreenH();
         castingWorker = new Thread(new CastingWorker());
@@ -71,8 +79,12 @@ public class Caster {
                         Touch touch = touchesPool.GetTouch();
                         //Send instruction;
                         double pX = touch.m_x / mScreenW;
+                        pX = Math.round(pX * 10000.0) / 10000.0;
                         double pY = touch.m_y / mScreenH;
+                        pY = Math.round(pY * 10000.0) / 10000.0;
                         String mess = touch.m_id + ":" + pX + ":" + pY + ":" + touch.m_type;
+                        byte[] b = mess.getBytes();
+                        Log.e(TAG, "size " + b.length);
                         try {
                             dataOutputStream.writeUTF(mess);
                             dataOutputStream.flush();
