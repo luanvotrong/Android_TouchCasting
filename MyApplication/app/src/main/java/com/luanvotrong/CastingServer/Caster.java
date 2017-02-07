@@ -4,6 +4,7 @@ package com.luanvotrong.CastingServer;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.esotericsoftware.kryonet.Connection;
 import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.Utilities.TouchesPool;
 import com.luanvotrong.touchcasting.MyApplication;
@@ -16,21 +17,18 @@ public class Caster {
     private TouchesPool touchesPool;
     private float mScreenW;
     private float mScreenH;
-    private Socket socket;
     private Thread castingWorker;
+    private Connection connection;
+
 
     public Caster() {
         touchesPool = new TouchesPool();
     }
 
-    public void start(Socket socket) {
+    public void start(Connection connection) {
         touchesPool.Clear();
-        try {
-            socket.setTcpNoDelay(true);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-        }
-        this.socket = socket;
+
+        this.connection = connection;
         mScreenW = MyApplication.getCastMgr().getScreenW();
         mScreenH = MyApplication.getCastMgr().getScreenH();
         castingWorker = new Thread(new CastingWorker());
@@ -45,12 +43,6 @@ public class Caster {
             Log.e(TAG, e.toString());
             castingWorker = null;
         }
-        try {
-            socket.close();
-        } catch (Exception e) {
-            Log.e(TAG, e.toString());
-            socket = null;
-        }
     }
 
     public void addTouch(int id, float x, float y, int action) {
@@ -64,25 +56,7 @@ public class Caster {
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
-/*
-                try {
-                    synchronized (touchesPool) {
-                        Touch touch = touchesPool.GetTouch();
-                        //Send instruction;
-                        float pX = touch.m_x / mScreenW;
-                        float pY = touch.m_y / mScreenH;
-                        String mess = touch.m_id + ":" + pX + ":" + pY + ":" + touch.m_type;
-                        try {
-                            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                            dos.writeUTF(mess);
-                        } catch (Exception e) {
-                            Log.e(TAG, e.toString());
-                        }
-                    }
-                } catch (Exception e) {
-
-                }
-                */
+                /*
                 synchronized (touchesPool) {
                     if (touchesPool.GetSize() > 0) {
                         Touch touch = touchesPool.GetTouch();
@@ -93,6 +67,18 @@ public class Caster {
                         try {
                             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
                             dos.writeUTF(mess);
+                        } catch (Exception e) {
+                            Log.e(TAG, e.toString());
+                        }
+                    }
+                }
+                */
+                synchronized (touchesPool) {
+                    if (touchesPool.GetSize() > 0) {
+                        Touch touch = touchesPool.GetTouch();
+                        //Send instruction;
+                        try {
+                            connection.sendTCP(touch);
                         } catch (Exception e) {
                             Log.e(TAG, e.toString());
                         }

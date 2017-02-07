@@ -4,7 +4,12 @@ import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
 import com.luanvotrong.Utilities.Define;
+import com.luanvotrong.Utilities.Touch;
 import com.luanvotrong.touchcasting.MyApplication;
 
 import java.net.ServerSocket;
@@ -17,57 +22,34 @@ import java.util.ArrayList;
 
 public class CasterMgr {
     private String TAG = "Lulu CasterMgr";
-    private CastMgr m_castMgr;
-    private ServerSocket serverSocket;
     private ArrayList<Caster> casters;
-    private Thread mServerSocketThread;
-
-    private class ServerSocketWorker implements Runnable {
-
-        @Override
-        public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    Socket socket = serverSocket.accept();
-                    Caster caster = new Caster();
-                    caster.start(socket);
-                    casters.add(caster);
-                } catch (Exception e) {
-                    Log.d(TAG, e.toString());
-                }
-            }
-        }
-    }
+    private Server server;
 
     public CasterMgr() {
         casters = new ArrayList<>();
     }
 
     public void start() {
+        server = new Server();
+        server.start();
+        Kryo kryo = server.getKryo();
+        kryo.register(Touch.class);
+        server.addListener(new Listener() {
+            public void connected (Connection connection) {
+                Caster caster = new Caster();
+                caster.start(connection);
+                casters.add(caster);
+            }
+        });
+
         try {
-            serverSocket = new ServerSocket(Define.PORT_CASTING_UDP);
-            mServerSocketThread = new Thread(new ServerSocketWorker());
-            mServerSocketThread.start();
+            server.bind(Define.PORT_CASTING_TCP, Define.PORT_CASTING_UDP);
         } catch (Exception e) {
             Log.d(TAG, e.toString());
         }
     }
 
     public void stop() {
-        try {
-            mServerSocketThread.interrupt();
-            mServerSocketThread = null;
-        } catch (Exception e) {
-            mServerSocketThread = null;
-        }
-
-        try {
-            serverSocket.close();
-            serverSocket = null;
-        } catch (Exception e) {
-            serverSocket = null;
-        }
-
         for (int i = 0, size = casters.size(); i < size; i++) {
             casters.get(i).stop();
         }
