@@ -34,16 +34,23 @@ public class CasterMgr {
         server.start();
         Kryo kryo = server.getKryo();
         kryo.register(Touch.class);
+        kryo.register(String.class);
         server.addListener(new Listener() {
-            public void connected (Connection connection) {
-                Caster caster = new Caster();
-                caster.start(connection);
-                casters.add(caster);
+            public void received(Connection connection, Object object) {
+                if (object instanceof String) {
+                    String mess = (String) object;
+                    if (mess.equals("request")) {
+                        Log.d(TAG, "Connected");
+                        Caster caster = new Caster();
+                        caster.start(connection);
+                        casters.add(caster);
+                    }
+                }
             }
         });
 
         try {
-            server.bind(Define.PORT_CASTING_TCP, Define.PORT_CASTING_UDP);
+            server.bind(Define.PORT_CASTING_TCP);
         } catch (Exception e) {
             Log.d(TAG, e.toString());
         }

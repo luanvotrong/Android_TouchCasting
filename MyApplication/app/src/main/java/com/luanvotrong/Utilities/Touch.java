@@ -4,10 +4,15 @@ package com.luanvotrong.Utilities;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class Touch {
+public class Touch
+    implements java.io.Serializable{
     public int m_id;
     public float m_x, m_y;
     public int m_type;
+
+    public Touch() {
+
+    }
 
     public Touch(int id, float x, float y, int type) {
         m_id = id;

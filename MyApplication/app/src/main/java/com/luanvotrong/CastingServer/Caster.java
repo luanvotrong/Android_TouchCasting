@@ -47,7 +47,7 @@ public class Caster {
 
     public void addTouch(int id, float x, float y, int action) {
         synchronized (touchesPool) {
-            touchesPool.addTouch(id, x, y, action);
+            touchesPool.addTouch(id, x / mScreenW, y/mScreenH, action);
         }
     }
 

@@ -36,18 +36,24 @@ public class Receiver {
         client = new Client();
         Kryo kryo = client.getKryo();
         kryo.register(Touch.class);
+        kryo.register(String.class);
         client.start();
         client.addListener(new Listener() {
-            public void received (Connection connection, Object object) {
+            public void received(Connection connection, Object object) {
                 if (object instanceof Touch) {
-                    Touch touch = (Touch)object;
+                    Touch touch = (Touch) object;
                     injectSingleTouch(touch);
                 }
             }
+
+            public void connected(Connection connection) {
+                Log.d(TAG, "Connected");
+                client.sendTCP(new String("request"));
+            }
         });
         try {
-            client.connect(5000, inetAddress, Define.PORT_CASTING_TCP, Define.PORT_CASTING_UDP);
-        } catch(Exception e) {
+            client.connect(5000, inetAddress, Define.PORT_CASTING_TCP);
+        } catch (Exception e) {
             Log.e(TAG, e.toString());
         }
 

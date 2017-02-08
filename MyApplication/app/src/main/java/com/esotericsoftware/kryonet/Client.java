@@ -1,21 +1,3 @@
-/* Copyright (c) 2008, Nathan Sweet
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
- * conditions are met:
- * 
- * - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
- * disclaimer in the documentation and/or other materials provided with the distribution.
- * - Neither the name of Esoteric Software nor the names of its contributors may be used to endorse or promote products derived
- * from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
- * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.esotericsoftware.kryonet;
 
@@ -69,7 +51,6 @@ public class Client extends Connection implements EndPoint {
 	private int connectTcpPort;
 	private int connectUdpPort;
 	private boolean isClosed;
-	private ClientDiscoveryHandler discoveryHandler;
 
 	/** Creates a Client with a write buffer size of 8192 and an object buffer size of 2048. */
 	public Client () {
@@ -100,8 +81,6 @@ public class Client extends Connection implements EndPoint {
 
 		this.serialization = serialization;
 
-		this.discoveryHandler = ClientDiscoveryHandler.DEFAULT;
-
 		initialize(serialization, writeBufferSize, objectBufferSize);
 
 		try {
@@ -109,10 +88,6 @@ public class Client extends Connection implements EndPoint {
 		} catch (IOException ex) {
 			throw new RuntimeException("Error opening selector.", ex);
 		}
-	}
-
-	public void setDiscoveryHandler (ClientDiscoveryHandler newDiscoveryHandler) {
-		discoveryHandler = newDiscoveryHandler;
 	}
 
 	public Serialization getSerialization () {
@@ -158,9 +133,9 @@ public class Client extends Connection implements EndPoint {
 		close();
 		if (INFO) {
 			if (udpPort != -1)
-				info("kryonet", "Connecting: " + host + ":" + tcpPort + "/" + udpPort);
+				info("Connecting: " + host + ":" + tcpPort + "/" + udpPort);
 			else
-				info("kryonet", "Connecting: " + host + ":" + tcpPort);
+				info("Connecting: " + host + ":" + tcpPort);
 		}
 		id = -1;
 		try {
@@ -217,18 +192,18 @@ public class Client extends Connection implements EndPoint {
 		}
 	}
 
-	/** Calls {@link #connect(int, InetAddress, int, int) connect} with the values last passed to connect.
+	/** Calls {@link #connect(int, InetAddress, int) connect} with the values last passed to connect.
 	 * @throws IllegalStateException if connect has never been called. */
 	public void reconnect () throws IOException {
 		reconnect(connectTimeout);
 	}
 
-	/** Calls {@link #connect(int, InetAddress, int, int) connect} with the specified timeout and the other values last passed to
+	/** Calls {@link #connect(int, InetAddress, int) connect} with the specified timeout and the other values last passed to
 	 * connect.
 	 * @throws IllegalStateException if connect has never been called. */
 	public void reconnect (int timeout) throws IOException {
 		if (connectHost == null) throw new IllegalStateException("This client has never been connected.");
-		connect(timeout, connectHost, connectTcpPort, connectUdpPort);
+		connect(connectTimeout, connectHost, connectTcpPort, connectUdpPort);
 	}
 
 	/** Reads or writes any pending data for this client. Multiple threads should not call this method at the same time.
@@ -262,7 +237,6 @@ public class Client extends Connection implements EndPoint {
 			Set<SelectionKey> keys = selector.selectedKeys();
 			synchronized (keys) {
 				for (Iterator<SelectionKey> iter = keys.iterator(); iter.hasNext();) {
-					keepAlive();
 					SelectionKey selectionKey = iter.next();
 					iter.remove();
 					try {
@@ -302,6 +276,7 @@ public class Client extends Connection implements EndPoint {
 										continue;
 									}
 									if (!isConnected) continue;
+									keepAlive();
 									if (DEBUG) {
 										String objectString = object == null ? "null" : object.getClass().getSimpleName();
 										if (!(object instanceof FrameworkMessage)) {
@@ -316,6 +291,7 @@ public class Client extends Connection implements EndPoint {
 								if (udp.readFromAddress() == null) continue;
 								Object object = udp.readObject(this);
 								if (object == null) continue;
+								keepAlive();
 								if (DEBUG) {
 									String objectString = object == null ? "null" : object.getClass().getSimpleName();
 									debug("kryonet", this + " received UDP: " + objectString);
@@ -335,8 +311,9 @@ public class Client extends Connection implements EndPoint {
 			if (tcp.isTimedOut(time)) {
 				if (DEBUG) debug("kryonet", this + " timed out.");
 				close();
-			} else
+			} else {
 				keepAlive();
+			}
 			if (isIdle()) notifyIdle();
 		}
 	}
@@ -368,7 +345,6 @@ public class Client extends Connection implements EndPoint {
 				}
 				close();
 			} catch (KryoNetException ex) {
-				lastProtocolError = ex;
 				if (ERROR) {
 					if (isConnected)
 						error("kryonet", "Error updating connection: " + this, ex);
@@ -406,23 +382,17 @@ public class Client extends Connection implements EndPoint {
 
 	public void close () {
 		super.close();
-		synchronized (updateLock) { // Blocks to avoid a select while the selector is used to bind the server connection.
-		}
 		// Select one last time to complete closing the socket.
-		if (!isClosed) {
-			isClosed = true;
-			selector.wakeup();
-			try {
-				selector.selectNow();
-			} catch (IOException ignored) {
+		synchronized (updateLock) {
+			if (!isClosed) {
+				isClosed = true;
+				selector.wakeup();
+				try {
+					selector.selectNow();
+				} catch (IOException ignored) {
+				}
 			}
 		}
-	}
-
-	/** Releases the resources used by this client, which may no longer be used. */
-	public void dispose () throws IOException {
-		close();
-		selector.close();
 	}
 
 	public void addListener (Listener listener) {
@@ -482,7 +452,7 @@ public class Client extends Connection implements EndPoint {
 			socket = new DatagramSocket();
 			broadcast(udpPort, socket);
 			socket.setSoTimeout(timeoutMillis);
-			DatagramPacket packet = discoveryHandler.onRequestNewDatagramPacket();
+			DatagramPacket packet = new DatagramPacket(new byte[0], 0);
 			try {
 				socket.receive(packet);
 			} catch (SocketTimeoutException ex) {
@@ -490,14 +460,12 @@ public class Client extends Connection implements EndPoint {
 				return null;
 			}
 			if (INFO) info("kryonet", "Discovered server: " + packet.getAddress());
-			discoveryHandler.onDiscoveredHost(packet, getKryo());
 			return packet.getAddress();
 		} catch (IOException ex) {
 			if (ERROR) error("kryonet", "Host discovery failed.", ex);
 			return null;
 		} finally {
 			if (socket != null) socket.close();
-			discoveryHandler.onFinally();
 		}
 	}
 
@@ -512,7 +480,7 @@ public class Client extends Connection implements EndPoint {
 			broadcast(udpPort, socket);
 			socket.setSoTimeout(timeoutMillis);
 			while (true) {
-				DatagramPacket packet = discoveryHandler.onRequestNewDatagramPacket();
+				DatagramPacket packet = new DatagramPacket(new byte[0], 0);
 				try {
 					socket.receive(packet);
 				} catch (SocketTimeoutException ex) {
@@ -520,7 +488,6 @@ public class Client extends Connection implements EndPoint {
 					return hosts;
 				}
 				if (INFO) info("kryonet", "Discovered server: " + packet.getAddress());
-				discoveryHandler.onDiscoveredHost(packet, getKryo());
 				hosts.add(packet.getAddress());
 			}
 		} catch (IOException ex) {
@@ -528,7 +495,6 @@ public class Client extends Connection implements EndPoint {
 			return hosts;
 		} finally {
 			if (socket != null) socket.close();
-			discoveryHandler.onFinally();
 		}
 	}
 }

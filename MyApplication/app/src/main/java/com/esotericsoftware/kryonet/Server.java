@@ -1,21 +1,3 @@
-/* Copyright (c) 2008, Nathan Sweet
- * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following
- * conditions are met:
- * 
- * - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- * - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following
- * disclaimer in the documentation and/or other materials provided with the distribution.
- * - Neither the name of Esoteric Software nor the names of its contributors may be used to endorse or promote products derived
- * from this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
- * BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT
- * SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. */
 
 package com.esotericsoftware.kryonet;
 
@@ -57,7 +39,7 @@ public class Server implements EndPoint {
 	private volatile boolean shutdown;
 	private Object updateLock = new Object();
 	private Thread updateThread;
-	private ServerDiscoveryHandler discoveryHandler;
+	private ByteBuffer emptyBuffer = ByteBuffer.allocate(0);
 
 	private Listener dispatchListener = new Listener() {
 		public void connected (Connection connection) {
@@ -115,17 +97,11 @@ public class Server implements EndPoint {
 
 		this.serialization = serialization;
 
-		this.discoveryHandler = ServerDiscoveryHandler.DEFAULT;
-
 		try {
 			selector = Selector.open();
 		} catch (IOException ex) {
 			throw new RuntimeException("Error opening selector.", ex);
 		}
-	}
-
-	public void setDiscoveryHandler (ServerDiscoveryHandler newDiscoveryHandler) {
-		discoveryHandler = newDiscoveryHandler;
 	}
 
 	public Serialization getSerialization () {
@@ -205,7 +181,6 @@ public class Server implements EndPoint {
 				UdpConnection udp = this.udp;
 				outer:
 				for (Iterator<SelectionKey> iter = keys.iterator(); iter.hasNext();) {
-					keepAlive();
 					SelectionKey selectionKey = iter.next();
 					iter.remove();
 					Connection fromConnection = (Connection)selectionKey.attachment();
@@ -329,9 +304,8 @@ public class Server implements EndPoint {
 							}
 							if (object instanceof DiscoverHost) {
 								try {
-									boolean responseSent = discoveryHandler
-										.onDiscoverHost(udp.datagramChannel, fromAddress, serialization);
-									if (DEBUG && responseSent) debug("kryonet", "Responded to host discovery from: " + fromAddress);
+									udp.datagramChannel.send(emptyBuffer, fromAddress);
+									if (DEBUG) debug("kryonet", "Responded to host discovery from: " + fromAddress);
 								} catch (IOException ex) {
 									if (WARN) warn("kryonet", "Error replying to host discovery from: " + fromAddress, ex);
 								}
@@ -371,15 +345,6 @@ public class Server implements EndPoint {
 				if (connection.tcp.needsKeepAlive(time)) connection.sendTCP(FrameworkMessage.keepAlive);
 			}
 			if (connection.isIdle()) connection.notifyIdle();
-		}
-	}
-
-	private void keepAlive () {
-		long time = System.currentTimeMillis();
-		Connection[] connections = this.connections;
-		for (int i = 0, n = connections.length; i < n; i++) {
-			Connection connection = connections[i];
-			if (connection.tcp.needsKeepAlive(time)) connection.sendTCP(FrameworkMessage.keepAlive);
 		}
 	}
 
@@ -574,20 +539,14 @@ public class Server implements EndPoint {
 			this.udp = null;
 		}
 
-		synchronized (updateLock) { // Blocks to avoid a select while the selector is used to bind the server connection.
-		}
 		// Select one last time to complete closing the socket.
-		selector.wakeup();
-		try {
-			selector.selectNow();
-		} catch (IOException ignored) {
+		synchronized (updateLock) {
+			selector.wakeup();
+			try {
+				selector.selectNow();
+			} catch (IOException ignored) {
+			}
 		}
-	}
-
-	/** Releases the resources used by this server, which may no longer be used. */
-	public void dispose () throws IOException {
-		close();
-		selector.close();
 	}
 
 	public Thread getUpdateThread () {
