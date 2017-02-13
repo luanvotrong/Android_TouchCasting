@@ -10,10 +10,7 @@ import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.luanvotrong.Utilities.Define;
 import com.luanvotrong.Utilities.Touch;
-import com.luanvotrong.touchcasting.MyApplication;
 
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
 
 /**
@@ -50,7 +47,7 @@ public class CasterMgr {
         });
 
         try {
-            server.bind(Define.PORT_CASTING_TCP);
+            server.bind(Define.PORT_CASTING_TCP, Define.PORT_CASTING_UDP);
         } catch (Exception e) {
             Log.d(TAG, e.toString());
         }
